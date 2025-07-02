@@ -1,0 +1,15 @@
+データベースファイル
+survey.db
+
+Pythonが自動生成するキャッシュファイル
+pycache/
+*.pyc
+
+仮想環境フォルダ（もし使っている場合）
+venv/
+.venv/
+env/
+.env
+
+OSが自動生成するファイル
+.DS_Store
