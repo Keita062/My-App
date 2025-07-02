@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>アンケート一覧</title>
+</head>
+<body>
+  <h2>登録済みアンケート一覧</h2>
+  <ul>
+    {% for survey in surveys %}
+      <li>
+        <a href="{{ url_for('detail', survey_id=survey[0]) }}">
+          {{ survey[1] }}（締切: {{ survey[2] }}）
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
