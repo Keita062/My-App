@@ -1,29 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>アンケートフォーム</title>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アンケートフォーム</title>
+    <!-- Tailwind CSSを読み込み、デザインを整える -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h2>アンケート入力フォーム</h2>
-  <form method="POST" action="/submit">
-    <!-- 企業名と締切 -->
-    <label>企業名: <input type="text" name="company" required></label><br>
-    <label>締切: <input type="date" name="deadline" required></label><br><br>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-8 max-w-2xl">
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-700">アンケート登録</h1>
 
-    <!-- 質問と回答をまとめるコンテナ -->
-    <div id="qa-container">
-      <div class="qa">
-        <input type="text" name="questions[]" placeholder="質問" required>
-        <textarea name="answers[]" placeholder="回答" required></textarea>
-      </div>
+        <!-- データ送信フォーム -->
+        <form action="{{ url_for('form') }}" method="post" class="bg-white p-8 rounded-lg shadow-md space-y-6">
+            
+            <!-- 企業名入力 -->
+            <div>
+                <label for="company_name" class="block text-sm font-medium text-gray-700 mb-1">企業名</label>
+                <input type="text" id="company_name" name="company_name" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <!-- 締切期限入力 -->
+            <div>
+                <label for="deadline" class="block text-sm font-medium text-gray-700 mb-1">締切期限</label>
+                <input type="date" id="deadline" name="deadline" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <hr>
+
+            <!-- 質問・回答フォームのコンテナ -->
+            <div id="questions-container" class="space-y-4">
+                <!-- 最初の質問・回答フォーム -->
+                <div class="question-pair">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">質問①</label>
+                    <textarea name="questions[]" rows="2" required
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    
+                    <label class="block text-sm font-medium text-gray-700 mt-2 mb-1">回答①</label>
+                    <textarea name="answers[]" rows="4"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+            </div>
+
+            <!-- 質問追加ボタン -->
+            <div class="flex justify-start">
+                <button type="button" id="add-question-btn"
+                        class="px-4 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    質問を追加
+                </button>
+            </div>
+
+            <hr>
+
+            <!-- 送信ボタン -->
+            <div class="flex justify-end">
+                <button type="submit"
+                        class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    登録する
+                </button>
+            </div>
+        </form>
+        
+        <!-- 一覧ページへのリンク -->
+        <div class="text-center mt-6">
+            <a href="{{ url_for('list_surveys') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">登録済み一覧を見る</a>
+        </div>
     </div>
 
-    <!-- JSで新しい質問欄を追加 -->
-    <button type="button" onclick="addQA()">＋ 質問追加</button><br><br>
-
-    <input type="submit" value="送信">
-  </form>
+    <!-- 外部JavaScriptファイルの読み込み -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
