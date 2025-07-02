@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>アンケート詳細</title>
+</head>
+<body>
+  <h2>{{ survey[0] }}（締切: {{ survey[1] }}）</h2>
+  <ul>
+    {% for q, a in qa_list %}
+      <li>
+        <strong>Q:</strong> {{ q }}<br>
+        <strong>A:</strong> {{ a }}
+      </li>
+    {% endfor %}
+  </ul>
+  <a href="{{ url_for('list_surveys') }}">← 一覧に戻る</a>
+</body>
+</html>
