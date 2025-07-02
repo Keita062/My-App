@@ -7,4 +7,7 @@ flask_survey_app/
 │   └── detail.html          ← 詳細表示
 ├── static/
 │   └── script.js            ← JS：質問追加用
-└── requirements.txt         ← 依存パッケージ一覧
+└── text_file
+    ├──detail.txt
+    │── want.txt
+    └──requirements.txt 
