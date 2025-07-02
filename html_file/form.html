@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>アンケートフォーム</title>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+  <h2>アンケート入力フォーム</h2>
+  <form method="POST" action="/submit">
+    <!-- 企業名と締切 -->
+    <label>企業名: <input type="text" name="company" required></label><br>
+    <label>締切: <input type="date" name="deadline" required></label><br><br>
+
+    <!-- 質問と回答をまとめるコンテナ -->
+    <div id="qa-container">
+      <div class="qa">
+        <input type="text" name="questions[]" placeholder="質問" required>
+        <textarea name="answers[]" placeholder="回答" required></textarea>
+      </div>
+    </div>
+
+    <!-- JSで新しい質問欄を追加 -->
+    <button type="button" onclick="addQA()">＋ 質問追加</button><br><br>
+
+    <input type="submit" value="送信">
+  </form>
+</body>
+</html>
