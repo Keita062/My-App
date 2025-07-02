@@ -1,0 +1,10 @@
+flask_survey_app/
+├── app.py                   ← Flaskサーバー本体
+├── survey.db                ← SQLite データベース（自動生成）
+├── templates/               ← HTMLテンプレート
+│   ├── form.html            ← 入力フォーム
+│   ├── list.html            ← 一覧表示
+│   └── detail.html          ← 詳細表示
+├── static/
+│   └── script.js            ← JS：質問追加用
+└── requirements.txt         ← 依存パッケージ一覧
