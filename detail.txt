@@ -1,7 +1,7 @@
 flask_survey_app/
 ├── app.py                   ← Flaskサーバー本体
-├── survey.db                ← SQLite データベース（自動生成）
-├── templates/               ← HTMLテンプレート
+├── database.db                ← SQLite データベース（自動生成）
+├── html/               ← HTMLテンプレート
 │   ├── form.html            ← 入力フォーム
 │   ├── list.html            ← 一覧表示
 │   └── detail.html          ← 詳細表示
