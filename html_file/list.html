@@ -1,19 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>アンケート一覧</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アンケート一覧</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h2>登録済みアンケート一覧</h2>
-  <ul>
-    {% for survey in surveys %}
-      <li>
-        <a href="{{ url_for('detail', survey_id=survey[0]) }}">
-          {{ survey[1] }}（締切: {{ survey[2] }}）
-        </a>
-      </li>
-    {% endfor %}
-  </ul>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-8 max-w-4xl">
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-700">登録済みアンケート一覧</h1>
+
+        <!-- アンケートデータが存在する場合 -->
+        {% if surveys %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <ul class="divide-y divide-gray-200">
+                    <!-- surveysリストから各surveyを取り出してループ処理 -->
+                    {% for survey in surveys %}
+                        <li class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                            <a href="{{ url_for('detail_survey', id=survey.id) }}" class="block">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <!-- 企業名を表示 -->
+                                        <p class="text-lg font-semibold text-indigo-600">{{ survey.company_name }}</p>
+                                        <!-- 締切日をフォーマットして表示 -->
+                                        <p class="text-sm text-gray-500">締切: {{ survey.deadline.strftime('%Y年%m月%d日') }}</p>
+                                    </div>
+                                    <!-- 削除ボタン -->
+                                    <form action="{{ url_for('delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのアンケートを削除しますか？');">
+                                        <button type="submit" class="px-3 py-1 bg-red-500 text-white text-sm font-semibold rounded-md hover:bg-red-600">削除</button>
+                                    </form>
+                                </div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        <!-- アンケートデータが存在しない場合 -->
+        {% else %}
+            <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                <p class="text-gray-500">登録されているアンケートはありません。</p>
+            </div>
+        {% endif %}
+
+        <!-- 新規登録フォームへのリンク -->
+        <div class="text-center mt-6">
+            <a href="{{ url_for('form') }}" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700">
+                新規登録する
+            </a>
+        </div>
+    </div>
 </body>
 </html>
