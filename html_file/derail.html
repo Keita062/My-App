@@ -1,19 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>アンケート詳細</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 企業名をページのタイトルに設定 -->
+    <title>「{{ survey.company_name }}」のアンケート詳細</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h2>{{ survey[0] }}（締切: {{ survey[1] }}）</h2>
-  <ul>
-    {% for q, a in qa_list %}
-      <li>
-        <strong>Q:</strong> {{ q }}<br>
-        <strong>A:</strong> {{ a }}
-      </li>
-    {% endfor %}
-  </ul>
-  <a href="{{ url_for('list_surveys') }}">← 一覧に戻る</a>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-8 max-w-3xl">
+        
+        <!-- ヘッダー情報 -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">{{ survey.company_name }}</h1>
+            <p class="text-md text-gray-500 mt-2">締切: {{ survey.deadline.strftime('%Y年%m月%d日') }}</p>
+        </div>
+
+        <!-- 質問と回答のセクション -->
+        <div class="space-y-4">
+            <!-- 紐付いている質問と回答のペアをループ処理 -->
+            {% for qa in survey.questions %}
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <!-- 質問内容 -->
+                    <h2 class="text-lg font-semibold text-gray-700 mb-2">【質問】 {{ qa.question }}</h2>
+                    <!-- 回答内容 -->
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <p class="text-gray-800 whitespace-pre-wrap">{{ qa.answer or '(回答なし)' }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- 一覧に戻るリンク -->
+        <div class="text-center mt-8">
+            <a href="{{ url_for('list_surveys') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">
+                &larr; 一覧に戻る
+            </a>
+        </div>
+    </div>
 </body>
 </html>
