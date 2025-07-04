@@ -94,3 +94,63 @@ def delete_survey(id):
     db.session.delete(survey_to_delete)
     db.session.commit()
     return redirect(url_for('survey.list_surveys'))
+
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from datetime import datetime
+import re
+from .extensions import db 
+from .models import Survey, QuestionAnswer # models.pyからインポートするように変更
+
+# (Blueprint定義などは変更なし)
+survey_bp = Blueprint('survey', __name__, template_folder='templates', static_folder='static')
+
+
+# --- 新規登録 ---
+@survey_bp.route('/form', methods=['GET', 'POST'])
+def form():
+    # (変更なし)
+    if request.method == 'POST':
+        # ( ... 新規登録の処理 ... )
+        return redirect(url_for('survey.list_surveys'))
+    return render_template('survey/form.html')
+
+
+# 【新規追加】編集・更新機能
+@survey_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit_survey(id):
+    survey_to_edit = Survey.query.get_or_404(id)
+
+    if request.method == 'POST':
+        # --- フォームから送信されたデータでデータベースを更新 ---
+        survey_to_edit.company_name = request.form['company_name']
+        survey_to_edit.course_name = request.form['course_name']
+        survey_to_edit.entry_date = datetime.strptime(request.form['entry_date'], '%Y-%m-%d').date()
+        survey_to_edit.deadline = datetime.strptime(request.form['deadline'], '%Y-%m-%d').date()
+
+        # --- 質問と回答の更新 ---
+        # フォームから送信された質問ID、質問、回答を取得
+        question_ids = request.form.getlist('question_id[]')
+        questions_text = request.form.getlist('questions[]')
+        answers_text = request.form.getlist('answers[]')
+
+        # 既存の質問を一度すべて削除（簡単のため）
+        # より高度な実装ではIDを元に更新・追加・削除を判定します
+        for qa in survey_to_edit.questions:
+            db.session.delete(qa)
+        
+        # フォームの内容で新しい質問を再作成
+        for q, a in zip(questions_text, answers_text):
+            if q: # 質問が空でなければ追加
+                new_qa = QuestionAnswer(question=q, answer=a, survey=survey_to_edit)
+                db.session.add(new_qa)
+
+        db.session.commit()
+        # 更新後は詳細ページにリダイレクト
+        return redirect(url_for('survey.detail_survey', id=id))
+
+    # --- GETリクエストの場合：編集フォームを表示 ---
+    return render_template('survey/edit_survey.html', survey=survey_to_edit)
+
+
+# (list_surveys, detail_survey, delete_survey, check_company などの関数は変更なし)
+# ...
