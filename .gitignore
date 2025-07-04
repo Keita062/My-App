@@ -1,16 +1,18 @@
-データベースファイル
-survey.db
+# データベースファイル
+# survey.db と log.db の両方を無視します
+*.db
 
-Pythonが自動生成するキャッシュファイル
-pycache/
+# Pythonのキャッシュファイル
+__pycache__/
 *.pyc
 
-仮想環境フォルダ（もし使っている場合）
+# IDE/エディタの設定ファイル
+.vscode/
+.idea/
+
+# 仮想環境フォルダ (もし使用している場合)
 venv/
 .venv/
 env/
 .env
 
-OSが自動生成するファイル
-.DS_Store
-survey.db
