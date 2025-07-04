@@ -1,13 +1,24 @@
-flask_survey_app/
-├── app.py                   ← Flaskサーバー本体
-├── database.db                ← SQLite データベース（自動生成）
-├── html/               ← HTMLテンプレート
-│   ├── form.html            ← 入力フォーム
-│   ├── list.html            ← 一覧表示
-│   └── detail.html          ← 詳細表示
-├── static/
-│   └── script.js            ← JS：質問追加用
-└── text_file
-    ├──detail.txt
-    │── want.txt
-    └──requirements.txt 
+main_app/
+├── run.py                 # (新規) メインアプリを起動するファイル
+├── instance/              # (新規) データベースファイルなどが格納されるフォルダ
+│   └── survey.db          # (自動生成) SQLiteデータベース
+│
+├── my_apps/               # (新規) 各アプリケーションを格納するパッケージ
+│   ├── __init__.py        # (新規) アプリケーションを作成するファクトリ
+│   ├── extensions.py      # (新規) Flask拡張機能(DBなど)を管理
+│   │
+│   └── survey/            # (移動) アンケートアプリのモジュール
+│       ├── __init__.py    # (新規) surveyモジュール初期化用(空でOK)
+│       ├── models.py      # (新規) DBモデル定義を分離
+│       ├── routes.py      # (変更) ルーティング(URL)定義を分離
+│       │
+│       ├── static/        # (移動)
+│       │   └── script.js  # (変更)
+│       │
+│       └── templates/     # (移動)
+│           └── survey/    # (新規) surveyアプリ用のフォルダ
+│               ├── form.html    # (変更)
+│               ├── list.html    # (変更)
+│               └── detail.html  # (変更)
+│
+└── requirements.txt       # (新規) プロジェクトに必要なライブラリ一覧
