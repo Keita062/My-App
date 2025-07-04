@@ -16,16 +16,17 @@
                     {% for survey in surveys %}
                         <li class="p-4 hover:bg-gray-50 transition-colors duration-200">
                             <div class="flex items-center justify-between">
-                                <a href="{{ url_for('detail_survey', id=survey.id) }}" class="flex-grow">
+                                <!-- 【変更】aタグのurl_forを 'survey.detail_survey' に修正 -->
+                                <a href="{{ url_for('survey.detail_survey', id=survey.id) }}" class="flex-grow">
                                     <p class="text-lg font-semibold text-indigo-600">{{ survey.company_name }}</p>
-                                    <!-- 【変更】コース名と打ち込み日を表示 -->
                                     <p class="text-sm text-gray-500">
                                         {{ survey.course_name or 'コース未設定' }} | 
                                         締切: {{ survey.deadline.strftime('%Y年%m月%d日') }} | 
                                         入力日: {{ survey.entry_date.strftime('%Y年%m月%d日') }}
                                     </p>
                                 </a>
-                                <form action="{{ url_for('delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのアンケートを削除しますか？');" class="ml-4 flex-shrink-0">
+                                <!-- 【変更】formのactionのurl_forを 'survey.delete_survey' に修正 -->
+                                <form action="{{ url_for('survey.delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのアンケートを削除しますか？');" class="ml-4 flex-shrink-0">
                                     <button type="submit" class="px-3 py-1 bg-red-500 text-white text-sm font-semibold rounded-md hover:bg-red-600">削除</button>
                                 </form>
                             </div>
@@ -40,7 +41,8 @@
         {% endif %}
 
         <div class="text-center mt-6">
-            <a href="{{ url_for('form') }}" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700">
+            <!-- 【変更】aタグのurl_forを 'survey.form' に修正 -->
+            <a href="{{ url_for('survey.form') }}" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700">
                 新規登録する
             </a>
         </div>
