@@ -10,8 +10,8 @@
     <div class="container mx-auto p-8 max-w-2xl">
         <h1 class="text-3xl font-bold mb-6 text-center text-gray-700">アンケート登録</h1>
 
-        <!-- 【変更】フォームにIDを追加 -->
-        <form id="survey-form" action="{{ url_for('form') }}" method="post" class="bg-white p-8 rounded-lg shadow-md space-y-6">
+        <!-- 【変更】actionのurl_forを 'survey.form' に修正 -->
+        <form id="survey-form" action="{{ url_for('survey.form') }}" method="post" class="bg-white p-8 rounded-lg shadow-md space-y-6">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- 企業名入力 -->
@@ -21,14 +21,14 @@
                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
 
-                <!-- 【追加】コース名入力 -->
+                <!-- コース名入力 -->
                 <div>
                     <label for="course_name" class="block text-sm font-medium text-gray-700 mb-1">コース名</label>
                     <input type="text" id="course_name" name="course_name"
                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
 
-                <!-- 【追加】打ち込み日入力 -->
+                <!-- 打ち込み日入力 -->
                 <div>
                     <label for="entry_date" class="block text-sm font-medium text-gray-700 mb-1">打ち込み日</label>
                     <input type="date" id="entry_date" name="entry_date" required
@@ -76,11 +76,12 @@
         </form>
         
         <div class="text-center mt-6">
-            <a href="{{ url_for('list_surveys') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">登録済み一覧を見る</a>
+            <!-- 【変更】aタグのurl_forを 'survey.list_surveys' に修正 -->
+            <a href="{{ url_for('survey.list_surveys') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">登録済み一覧を見る</a>
         </div>
     </div>
 
-    <!-- 【追加】確認モーダルウィンドウ -->
+    <!-- 確認モーダルウィンドウ -->
     <div id="confirmation-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
         <div class="relative mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3 text-center">
@@ -96,6 +97,7 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!-- 【変更】scriptのurl_forを 'survey.static' に修正 -->
+    <script src="{{ url_for('survey.static', filename='script.js') }}"></script>
 </body>
 </html>
