@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from datetime import datetime
 import re
-from extensions import db # extensions.pyからdbをインポート
+# 【変更】先頭にドット(.)を追加して、同じフォルダ内のextensionsをインポートするよう修正
+from .extensions import db 
 
 # --- データベースモデル（テーブルの設計図）の定義 ---
 # モデルの定義は変更なし
@@ -20,13 +21,10 @@ class QuestionAnswer(db.Model):
     survey_id = db.Column(db.Integer, db.ForeignKey('survey.id'), nullable=False)
 
 # --- Blueprintの作成 ---
-# 'app' の代わりに 'survey_bp' というBlueprintを作成します
 survey_bp = Blueprint('survey', __name__, template_folder='templates', static_folder='static')
 
 
 # --- ルーティング（URLと関数の紐付け） ---
-# デコレータを @app.route から @survey_bp.route に変更します
-
 @survey_bp.route('/', methods=['GET', 'POST'])
 @survey_bp.route('/form', methods=['GET', 'POST'])
 def form():
@@ -56,10 +54,8 @@ def form():
                 db.session.add(qa_pair)
         
         db.session.commit()
-        # url_forの指定を 'survey.list_surveys' のようにBlueprint名からに変更
         return redirect(url_for('survey.list_surveys'))
     
-    # テンプレートのパスを 'survey/' フォルダ内に変更
     return render_template('survey/form.html')
 
 @survey_bp.route('/check_company', methods=['POST'])
@@ -98,5 +94,3 @@ def delete_survey(id):
     db.session.delete(survey_to_delete)
     db.session.commit()
     return redirect(url_for('survey.list_surveys'))
-
-# このファイルは直接実行されなくなるので、if __name__ == '__main__': のブロックは削除します
