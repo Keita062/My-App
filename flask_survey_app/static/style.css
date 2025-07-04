@@ -261,3 +261,53 @@ hr {
 .modal-actions .btn-secondary:hover {
     background-color: #9ca3af;
 }
+/* --- ボタン --- */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    font-weight: 600;
+    color: white;
+    border-radius: 0.375rem; /* rounded-md */
+    text-decoration: none;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-left: 0.5rem; /* ボタン間の余白 */
+}
+.btn:first-child {
+    margin-left: 0;
+}
+
+.btn-primary {
+    background-color: #4f46e5; /* bg-indigo-600 */
+}
+.btn-primary:hover {
+    background-color: #4338ca; /* hover:bg-indigo-700 */
+}
+
+/* 【追加】編集ボタン用のスタイル */
+.btn-secondary {
+    background-color: #6b7280; /* bg-gray-500 */
+}
+.btn-secondary:hover {
+    background-color: #4b5563; /* hover:bg-gray-600 */
+}
+
+.btn-danger {
+    background-color: #ef4444; /* bg-red-500 */
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+}
+.btn-danger:hover {
+    background-color: #dc2626; /* hover:bg-red-600 */
+}
+
+.btn-success {
+    background-color: #22c55e; /* bg-green-500 */
+}
+.btn-success:hover {
+    background-color: #16a34a; /* hover:bg-green-600 */
+}
+
+/* --- (以降の既存CSSは省略) --- */
