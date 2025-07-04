@@ -20,7 +20,7 @@
 
         <div class="qa-container">
             {% for qa in survey.questions %}
-                <div class="card qa-block" style="margin-bottom: 1rem;">
+                <div class="card qa-block">
                     <h2>【質問】 {{ qa.question }}</h2>
                     <div class="qa-answer">
                         <p>{{ qa.answer or '(回答なし)' }}</p>
@@ -29,8 +29,9 @@
             {% endfor %}
         </div>
 
-        <div class="text-center mt-6">
+        <div class="text-center mt-6" style="display: flex; justify-content: center; align-items: center; gap: 1rem;">
             <a href="{{ url_for('survey.list_surveys') }}" class="link">&larr; 一覧に戻る</a>
+            <a href="{{ url_for('survey.edit_survey', id=survey.id) }}" class="btn btn-primary">このアンケートを編集する</a>
         </div>
     </div>
 </body>

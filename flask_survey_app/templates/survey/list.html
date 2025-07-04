@@ -23,9 +23,12 @@
                                     入力日: {{ survey.entry_date.strftime('%Y年%m月%d日') }}
                                 </p>
                             </a>
-                            <form action="{{ url_for('survey.delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのアンケートを削除しますか？');">
-                                <button type="submit" class="btn btn-danger">削除</button>
-                            </form>
+                            <div class="list-item-actions">
+                                <a href="{{ url_for('survey.edit_survey', id=survey.id) }}" class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">編集</a>
+                                <form action="{{ url_for('survey.delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのアンケートを削除しますか？');">
+                                    <button type="submit" class="btn btn-danger">削除</button>
+                                </form>
+                            </div>
                         </div>
                     </li>
                 {% endfor %}

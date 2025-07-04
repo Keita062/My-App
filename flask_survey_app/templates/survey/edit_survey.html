@@ -35,8 +35,6 @@
             <div id="questions-container">
                 {% for qa in survey.questions %}
                 <div class="question-pair">
-                    <!-- 既存の質問IDを隠しフィールドとして保持 -->
-                    <input type="hidden" name="question_id[]" value="{{ qa.id }}">
                     <div class="form-group">
                         <label class="question-label">質問{{ loop.index }}</label>
                         <textarea name="questions[]" rows="2" required>{{ qa.question }}</textarea>
@@ -44,6 +42,18 @@
                     <div class="form-group">
                         <label class="answer-label">回答{{ loop.index }}</label>
                         <textarea name="answers[]" rows="4">{{ qa.answer or '' }}</textarea>
+                    </div>
+                </div>
+                {% else %}
+                <!-- 質問が一つもない場合でも、最初の入力欄を表示 -->
+                <div class="question-pair">
+                    <div class="form-group">
+                        <label class="question-label">質問1</label>
+                        <textarea name="questions[]" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="answer-label">回答1</label>
+                        <textarea name="answers[]" rows="4"></textarea>
                     </div>
                 </div>
                 {% endfor %}
@@ -62,7 +72,6 @@
         </form>
     </div>
 
-    <!-- script.jsは質問の動的な追加・削除に必要 -->
     <script src="{{ url_for('survey.static', filename='script.js') }}"></script>
 </body>
 </html>
