@@ -4,47 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>アンケート一覧</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('survey.static', filename='style.css') }}">
 </head>
-<body class="bg-gray-100 text-gray-800">
-    <div class="container mx-auto p-8 max-w-4xl">
-        <h1 class="text-3xl font-bold mb-6 text-center text-gray-700">登録済みアンケート一覧</h1>
+<body>
+    <div class="container list-container">
+        <h1 style="font-size: 1.875rem;">登録済みアンケート一覧</h1>
 
         {% if surveys %}
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <ul class="divide-y divide-gray-200">
-                    {% for survey in surveys %}
-                        <li class="p-4 hover:bg-gray-50 transition-colors duration-200">
-                            <div class="flex items-center justify-between">
-                                <!-- 【変更】aタグのurl_forを 'survey.detail_survey' に修正 -->
-                                <a href="{{ url_for('survey.detail_survey', id=survey.id) }}" class="flex-grow">
-                                    <p class="text-lg font-semibold text-indigo-600">{{ survey.company_name }}</p>
-                                    <p class="text-sm text-gray-500">
-                                        {{ survey.course_name or 'コース未設定' }} | 
-                                        締切: {{ survey.deadline.strftime('%Y年%m月%d日') }} | 
-                                        入力日: {{ survey.entry_date.strftime('%Y年%m月%d日') }}
-                                    </p>
-                                </a>
-                                <!-- 【変更】formのactionのurl_forを 'survey.delete_survey' に修正 -->
-                                <form action="{{ url_for('survey.delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのアンケートを削除しますか？');" class="ml-4 flex-shrink-0">
-                                    <button type="submit" class="px-3 py-1 bg-red-500 text-white text-sm font-semibold rounded-md hover:bg-red-600">削除</button>
-                                </form>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+            <ul class="survey-list">
+                {% for survey in surveys %}
+                    <li>
+                        <div class="list-item-content">
+                            <a href="{{ url_for('survey.detail_survey', id=survey.id) }}">
+                                <p class="company-name">{{ survey.company_name }}</p>
+                                <p class="details">
+                                    {{ survey.course_name or 'コース未設定' }} | 
+                                    締切: {{ survey.deadline.strftime('%Y年%m月%d日') }} | 
+                                    入力日: {{ survey.entry_date.strftime('%Y年%m月%d日') }}
+                                </p>
+                            </a>
+                            <form action="{{ url_for('survey.delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのアンケートを削除しますか？');">
+                                <button type="submit" class="btn btn-danger">削除</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
         {% else %}
-            <div class="bg-white p-8 rounded-lg shadow-md text-center">
-                <p class="text-gray-500">登録されているアンケートはありません。</p>
+            <div class="card text-center">
+                <p>登録されているアンケートはありません。</p>
             </div>
         {% endif %}
 
         <div class="text-center mt-6">
-            <!-- 【変更】aタグのurl_forを 'survey.form' に修正 -->
-            <a href="{{ url_for('survey.form') }}" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700">
-                新規登録する
-            </a>
+            <a href="{{ url_for('survey.form') }}" class="btn btn-primary">新規登録する</a>
         </div>
     </div>
 </body>
