@@ -6,8 +6,7 @@ from .models import Report
 report_bp = Blueprint(
     'report', 
     __name__,
-    template_folder='templates',
-    static_folder='static'
+    template_folder='templates'
 )
 
 @report_bp.route('/')
@@ -16,52 +15,53 @@ def list_reports():
     all_reports = Report.query.order_by(Report.report_date.desc()).all()
     return render_template('report/list.html', reports=all_reports)
 
-@report_bp.route('/new', methods=['GET', 'POST'])
-def new_report():
-    """新しい日報（開始報告）を作成"""
+@report_bp.route('/select_type')
+def select_type():
+    reports_to_complete = Report.query.filter(Report.end_completed_tasks == None).order_by(Report.report_date.desc()).all()
+    return render_template('report/select_type.html', reports_to_complete=reports_to_complete)
+
+@report_bp.route('/new_start', methods=['GET', 'POST'])
+def new_start_report():
     if request.method == 'POST':
+        report_date_str = request.form['report_date']
+        report_date = datetime.strptime(report_date_str, '%Y-%m-%d').date()
+
+        existing_report = Report.query.filter_by(report_date=report_date).first()
+        if existing_report:
+            flash(f'{report_date_str}の開始報告は既に存在します。', 'error')
+            return redirect(url_for('report.select_type'))
+
         new_report = Report(
-            report_date=datetime.strptime(request.form['report_date'], '%Y-%m-%d').date(),
-            scheduled_start_time=request.form['scheduled_start_time'],
-            scheduled_end_time=request.form['scheduled_end_time'],
-            scheduled_tasks=request.form['scheduled_tasks'],
-            goals=request.form['goals'],
-            status=0 # 開始報告のみ
+            report_date=report_date,
+            start_scheduled_time=f"{request.form['start_time']} - {request.form['end_time']}",
+            start_scheduled_tasks=request.form['scheduled_tasks'],
+            start_goals=request.form['goals']
         )
         db.session.add(new_report)
         db.session.commit()
+        flash(f'{report_date_str}の開始報告を登録しました。', 'success')
         return redirect(url_for('report.list_reports'))
     
-    today_str = datetime.today().strftime('%Y-%m-%d')
-    return render_template('report/form.html', today=today_str, report=None)
+    return render_template('report/form.html', form_type='start', report=None)
 
-
-@report_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
-def edit_report(id):
-    """日報の編集（完了報告）"""
+@report_bp.route('/new_end/<int:id>', methods=['GET', 'POST'])
+def new_end_report(id):
     report = Report.query.get_or_404(id)
     if request.method == 'POST':
-        # 完了報告の項目を更新
-        report.actual_start_time = request.form['actual_start_time']
-        report.actual_end_time = request.form['actual_end_time']
-        report.completed_tasks = request.form['completed_tasks']
-        report.reflection = request.form['reflection']
-        report.status = 1 # 完了報告済みに更新
+        report.end_actual_time = f"{request.form['start_time']} - {request.form['end_time']}"
+        report.end_completed_tasks = request.form['completed_tasks']
+        report.end_reflection = request.form['reflection']
         db.session.commit()
+        flash(f'{report.report_date.strftime("%Y-%m-%d")}の完了報告を登録しました。', 'success')
         return redirect(url_for('report.list_reports'))
-    
-    return render_template('report/form.html', report=report)
 
-@report_bp.route('/<int:id>')
-def detail_report(id):
-    """日報の詳細を表示"""
-    report = Report.query.get_or_404(id)
-    return render_template('report/detail.html', report=report)
+    # form.htmlを「完了報告モード」で表示
+    return render_template('report/form.html', form_type='end', report=report)
 
 @report_bp.route('/delete/<int:id>', methods=['POST'])
 def delete_report(id):
-    """日報を削除"""
     report_to_delete = Report.query.get_or_404(id)
     db.session.delete(report_to_delete)
     db.session.commit()
+    flash(f'{report_to_delete.report_date.strftime("%Y-%m-%d")}の日報を削除しました。', 'success')
     return redirect(url_for('report.list_reports'))

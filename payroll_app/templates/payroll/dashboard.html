@@ -12,8 +12,6 @@
             <h1>給与計算ダッシュボード</h1>
             <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
         </div>
-
-        <!-- サマリー -->
         <div class="payroll-summary-grid">
             <div class="card text-center">
                 <h2>今年の累計年収</h2>
@@ -37,12 +35,9 @@
                 </div>
             </div>
         </div>
-
         <div class="text-center mb-2 page-actions">
             <a href="{{ url_for('payroll.new_record') }}" class="btn btn-primary">勤務記録を追加する</a>
         </div>
-
-        <!-- 月別給与テーブル -->
         <div class="card">
             <h2>月別給与一覧</h2>
             <table class="payroll-table">
@@ -68,8 +63,6 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- 直近の記録 -->
         <div class="card">
             <h2>直近の勤務記録</h2>
             <ul class="payroll-recent-list">
@@ -90,8 +83,6 @@
             </ul>
         </div>
     </div>
-
-    <!-- 進捗バーの幅を設定するためのスクリプト -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const progressBars = document.querySelectorAll('.progress-bar-inner');

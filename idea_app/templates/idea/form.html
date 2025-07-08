@@ -12,9 +12,47 @@
             <h1>{% if idea %}アイディア編集{% else %}新規アイディア作成{% endif %}</h1>
             <a href="{{ url_for('idea.list_ideas') }}" class="link">&larr; 一覧に戻る</a>
         </div>
-
         <form action="{{ url_for('idea.edit_idea', id=idea.id) if idea else url_for('idea.new_idea') }}" method="post" class="card">
-            
             <div class="form-group">
                 <label for="title">タイトル</label>
-                <input type="text" id="title" name="title" value="{{ idea.title
+                <input type="text" id="title" name="title" value="{{ idea.title or '' }}" required>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="status">ステータス</label>
+                    <select id="status" name="status" required>
+                        <option value="未着手" {% if idea and idea.status == '未着手' %}selected{% endif %}>未着手</option>
+                        <option value="実行中" {% if idea and idea.status == '実行中' %}selected{% endif %}>実行中</option>
+                        <option value="完了" {% if idea and idea.status == '完了' %}selected{% endif %}>完了</option>
+                        <option value="保留" {% if idea and idea.status == '保留' %}selected{% endif %}>保留</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="priority">優先度</label>
+                    <select id="priority" name="priority" required>
+                        <option value="高" {% if idea and idea.priority == '高' %}selected{% endif %}>高</option>
+                        <option value="中" {% if idea and idea.priority == '中' %}selected{% endif %}>中</option>
+                        <option value="低" {% if idea and idea.priority == '低' %}selected{% endif %}>低</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="category">カテゴリ</label>
+                    <input type="text" id="category" name="category" value="{{ idea.category or '' }}" placeholder="例: 就活, アプリ開発">
+                </div>
+                <div class="form-group">
+                    <label for="due_date">目標期日</label>
+                    <input type="date" id="due_date" name="due_date" value="{{ idea.due_date.strftime('%Y-%m-%d') if idea and idea.due_date else '' }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="details">詳細</label>
+                <textarea id="details" name="details" rows="6">{{ idea.details or '' }}</textarea>
+            </div>
+            <div class="form-actions">
+                <a href="{{ url_for('idea.list_ideas') }}" class="btn btn-secondary">キャンセル</a>
+                <button type="submit" class="btn btn-primary">{% if idea %}更新する{% else %}登録する{% endif %}</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

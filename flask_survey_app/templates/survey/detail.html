@@ -8,11 +8,11 @@
 </head>
 <body>
     <div class="container detail-container">
-        <div class="card detail-header">
+        <div class="card">
             <div class="detail-header-main">
                 <div>
-                    <h1 class="company-name">{{ survey.company_name }}</h1>
-                    <div class="details">
+                    <h1>{{ survey.company_name }}</h1>
+                    <div class="item-details">
                         <p><strong>コース名:</strong> {{ survey.course_name or '未設定' }}</p>
                         <p><strong>打ち込み日:</strong> {{ survey.entry_date.strftime('%Y年%m月%d日') }}</p>
                         <p><strong>締切:</strong> {{ survey.deadline.strftime('%Y年%m月%d日') }}</p>
@@ -21,7 +21,6 @@
                 <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
             </div>
         </div>
-
         <div class="qa-container">
             {% for qa in survey.questions %}
                 <div class="card qa-block">
@@ -32,7 +31,6 @@
                 </div>
             {% endfor %}
         </div>
-
         <div class="page-actions">
             <a href="{{ url_for('survey.list_surveys') }}" class="link">&larr; 一覧に戻る</a>
             <a href="{{ url_for('survey.edit_survey', id=survey.id) }}" class="btn btn-primary">このアンケートを編集する</a>

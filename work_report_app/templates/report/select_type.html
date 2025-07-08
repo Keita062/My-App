@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>報告タイプの選択</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>報告タイプの選択</h1>
+            <a href="{{ url_for('report.list_reports') }}" class="link">&larr; 一覧に戻る</a>
+        </div>
+        <div class="report-select-grid">
+            <div class="card">
+                <h2>1. 開始報告を登録する</h2>
+                <p>新しい日付の業務開始報告を登録します。</p>
+                <div class="page-actions">
+                    <a href="{{ url_for('report.new_start_report') }}" class="btn btn-primary">開始報告フォームへ</a>
+                </div>
+            </div>
+            <div class="card">
+                <h2>2. 完了報告を登録する</h2>
+                <p>既にある開始報告に、業務完了報告を追加します。</p>
+                {% if reports_to_complete %}
+                    <form>
+                        <div class="form-group">
+                            <label for="report_id">完了報告する日付を選択してください:</label>
+                            <select id="report_id" name="report_id" class="form-control">
+                                {% for report in reports_to_complete %}
+                                    <option value="{{ report.id }}">{{ report.report_date.strftime('%Y年%m月%d日') }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="page-actions">
+                            <button type="button" onclick="location.href='/report/new_end/' + document.getElementById('report_id').value" class="btn btn-success">完了報告フォームへ</button>
+                        </div>
+                    </form>
+                {% else %}
+                    <p class="text-muted">完了報告待ちの日報はありません。</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

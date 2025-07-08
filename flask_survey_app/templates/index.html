@@ -9,7 +9,6 @@
 <body>
     <div class="container">
         <h1>アプリケーションポータル</h1>
-        
         <div class="portal-grid">
             <div class="card card-hover portal-card">
                 <h2 class="color-survey">アンケート管理アプリ</h2>
@@ -26,11 +25,10 @@
                 <p>思いついたアイディアを記録し、育てて管理します。</p>
                 <a href="{{ url_for('idea.list_ideas') }}" class="btn btn-idea">アプリへ移動</a>
             </div>
-
             <div class="card card-hover portal-card">
-                <h2 style="color: #0891b2;">給与計算アプリ</h2>
+                <h2 class="color-payroll">給与計算アプリ</h2>
                 <p>アルバイトの勤怠を記録し、年収上限を管理します。</p>
-                <a href="{{ url_for('payroll.dashboard') }}" class="btn" style="background-color: #06b6d4;">アプリへ移動</a>
+                <a href="{{ url_for('payroll.dashboard') }}" class="btn btn-payroll">アプリへ移動</a>
             </div>
         </div>
     </div>

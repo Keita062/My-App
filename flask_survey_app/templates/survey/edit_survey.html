@@ -10,10 +10,61 @@
     <div class="container form-container">
         <div class="page-header">
             <h1>アンケート編集</h1>
-            <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
+            <a href="{{ url_for('survey.list_surveys') }}" class="link">&larr; 一覧に戻る</a>
         </div>
-
         <form id="survey-form" action="{{ url_for('survey.edit_survey', id=survey.id) }}" method="post" class="card">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="company_name">企業名</label>
+                    <input type="text" id="company_name" name="company_name" required value="{{ survey.company_name }}">
+                </div>
+                <div class="form-group">
+                    <label for="course_name">コース名</label>
+                    <input type="text" id="course_name" name="course_name" value="{{ survey.course_name or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="entry_date">打ち込み日</label>
+                    <input type="date" id="entry_date" name="entry_date" required value="{{ survey.entry_date.strftime('%Y-%m-%d') }}">
+                </div>
+                <div class="form-group">
+                    <label for="deadline">締切期限</label>
+                    <input type="date" id="deadline" name="deadline" required value="{{ survey.deadline.strftime('%Y-%m-%d') }}">
+                </div>
+            </div>
+            <hr>
+            <div id="questions-container">
+                {% for qa in survey.questions %}
+                <div class="question-pair">
+                    <div class="form-group">
+                        <label class="question-label">質問{{ loop.index }}</label>
+                        <textarea name="questions[]" rows="2" required>{{ qa.question }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="answer-label">回答{{ loop.index }}</label>
+                        <textarea name="answers[]" rows="4">{{ qa.answer or '' }}</textarea>
+                    </div>
+                </div>
+                {% else %}
+                <div class="question-pair">
+                    <div class="form-group">
+                        <label class="question-label">質問1</label>
+                        <textarea name="questions[]" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="answer-label">回答1</label>
+                        <textarea name="answers[]" rows="4"></textarea>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div>
+                <button type="button" id="add-question-btn" class="btn btn-success">質問を追加</button>
+            </div>
+            <hr>
+            <div class="form-actions">
+                <a href="{{ url_for('survey.detail_survey', id=survey.id) }}" class="btn btn-secondary">キャンセル</a>
+                <button type="submit" class="btn btn-primary">更新する</button>
+            </div>
         </form>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>

@@ -12,28 +12,24 @@
             <h1>登録済みアンケート一覧</h1>
             <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
         </div>
-
         <div class="text-center mb-2">
             <a href="{{ url_for('survey.form') }}" class="btn btn-primary">新規アンケートを登録</a>
         </div>
-
-        <ul class="survey-list">
+        <ul class="generic-list">
             {% for survey in surveys %}
             <li>
                 <div class="list-item-content">
                     <a href="{{ url_for('survey.detail_survey', id=survey.id) }}">
-                        <p class="company-name">{{ survey.company_name }}</p>
-                        <p class="details">締切: {{ survey.deadline.strftime('%Y年%m月%d日') }}</p>
+                        <p class="item-title">{{ survey.company_name }}</p>
+                        <p class="item-details">締切: {{ survey.deadline.strftime('%Y年%m月%d日') }}</p>
                     </a>
-                    <form action="{{ url_for('survey.delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのアンケートを削除しますか？');">
+                    <form class="list-item-actions" action="{{ url_for('survey.delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのアンケートを削除しますか？');">
                         <button type="submit" class="btn btn-danger btn-sm">削除</button>
                     </form>
                 </div>
             </li>
             {% else %}
-            <li>
-                <p>登録されているアンケートはありません。</p>
-            </li>
+            <li><p>登録されているアンケートはありません。</p></li>
             {% endfor %}
         </ul>
     </div>

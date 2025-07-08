@@ -7,45 +7,68 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container list-container">
+    <div class="container report-container">
         <div class="page-header">
             <h1>インターンシップ日報一覧</h1>
             <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
         </div>
-
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <div class="text-center mb-2">
-            <a href="{{ url_for('report.new_report') }}" class="btn btn-primary">新規日報を作成</a>
+            <a href="{{ url_for('report.select_type') }}" class="btn btn-primary">新規日報を作成</a>
         </div>
-
-        <ul class="survey-list">
+        <div class="report-list-container">
             {% for report in reports %}
-            <li>
-                <div class="list-item-content">
-                    <a href="{{ url_for('report.detail_report', id=report.id) }}">
-                        <p class="company-name">{{ report.report_date.strftime('%Y年%m月%d日') }}</p>
-                        <p class="details">
-                            ステータス: 
-                            {% if report.status == 1 %}
-                                <span class="status-complete">完了</span>
-                            {% else %}
-                                <span class="status-inprogress">作成中</span>
-                            {% endif %}
-                        </p>
-                    </a>
-                    <div class="list-item-actions">
-                        <a href="{{ url_for('report.edit_report', id=report.id) }}" class="btn btn-secondary btn-sm">
-                            {% if report.status == 0 %}完了報告{% else %}編集{% endif %}
-                        </a>
-                        <form action="{{ url_for('report.delete_report', id=report.id) }}" method="post" onsubmit="return confirm('本当にこの日報を削除しますか？');">
-                            <button type="submit" class="btn btn-danger btn-sm">削除</button>
-                        </form>
+            <div class="report-day-entry">
+                <div class="report-day-header">
+                    <h3>{{ report.report_date.strftime('%Y年%m月%d日') }}</h3>
+                    <form action="{{ url_for('report.delete_report', id=report.id) }}" method="post" onsubmit="return confirm('この日の報告をすべて削除しますか？');">
+                        <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                    </form>
+                </div>
+                <div class="report-grid">
+                    <div class="card">
+                        <h4>【開始報告】</h4>
+                        <dl class="report-details">
+                            <dt>予定業務時間</dt>
+                            <dd>{{ report.start_scheduled_time or '未記入' }}</dd>
+                            <dt>予定業務内容</dt>
+                            <dd>{{ report.start_scheduled_tasks or '未記入' }}</dd>
+                            <dt>業務目標</dt>
+                            <dd>{{ report.start_goals or '未記入' }}</dd>
+                        </dl>
+                    </div>
+                    <div class="card">
+                        <h4>【完了報告】</h4>
+                        {% if report.end_completed_tasks %}
+                        <dl class="report-details">
+                            <dt>業務時間</dt>
+                            <dd>{{ report.end_actual_time }}</dd>
+                            <dt>実施業務内容</dt>
+                            <dd>{{ report.end_completed_tasks }}</dd>
+                            <dt>反省</dt>
+                            <dd>{{ report.end_reflection }}</dd>
+                        </dl>
+                        {% else %}
+                        <div class="report-not-filled">
+                            <p>未記入</p>
+                            <a href="{{ url_for('report.new_end_report', id=report.id) }}" class="btn btn-success btn-sm">完了報告を記入</a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-            </li>
+            </div>
             {% else %}
-            <li><p>登録されている日報はありません。</p></li>
+            <div class="card text-center">
+                <p>登録されている日報はありません。</p>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
 </body>
 </html>

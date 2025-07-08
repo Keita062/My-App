@@ -3,17 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if report %}日報編集{% else %}新規日報作成{% endif %}</title>
+    <title>日報作成</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container form-container">
         <div class="page-header">
-            <h1>{% if report %}日報編集{% else %}新規日報作成{% endif %}</h1>
-            <a href="{{ url_for('report.list_reports') }}" class="link">&larr; 一覧に戻る</a>
+            <h1>
+                {% if form_type == 'start' %}
+                    開始報告の作成
+                {% else %}
+                    完了報告の作成 ({{ report.report_date.strftime('%Y-%m-%d') }})
+                {% endif %}
+            </h1>
+            <a href="{{ url_for('report.select_type') }}" class="link">&larr; 選択画面に戻る</a>
         </div>
-
-        <form action="{{ url_for('report.edit_report', id=report.id) if report else url_for('report.new_report') }}" method="post" class="card"></form>
+        <form method="post" class="card">
+            {% if form_type == 'start' %}
+                <h2>【開始報告】</h2>
+                <div class="form-group">
+                    <label for="report_date">日付</label>
+                    <input type="date" id="report_date" name="report_date" required>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>予定業務時間</label>
+                        <input type="time" name="start_time" required>
+                    </div>
+                     <div class="form-group">
+                        <label>&nbsp;</label>
+                        <input type="time" name="end_time" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="scheduled_tasks">予定業務内容</label>
+                    <textarea id="scheduled_tasks" name="scheduled_tasks" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="goals">業務目標</label>
+                    <textarea id="goals" name="goals" rows="3" required></textarea>
+                </div>
+            {% else %}
+                <h2>【完了報告】</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>実施業務時間</label>
+                        <input type="time" name="start_time" required>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <input type="time" name="end_time" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="completed_tasks">実施業務内容</label>
+                    <textarea id="completed_tasks" name="completed_tasks" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="reflection">反省・考察</label>
+                    <textarea id="reflection" name="reflection" rows="4" required></textarea>
+                </div>
+            {% endif %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">登録する</button>
+            </div>
+        </form>
     </div>
 </body>
 </html>
