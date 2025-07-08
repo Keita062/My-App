@@ -60,7 +60,6 @@ def create_app():
             path=request.path,
             method=request.method
         )
-
         with app.app_context():
             db.session.add(new_log)
             db.session.commit()
