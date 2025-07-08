@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>アンケートフォーム</title>
-    <!-- 【変更】CSSファイルを読み込む -->
-    <link rel="stylesheet" href="{{ url_for('survey.static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container form-container">
@@ -73,6 +72,6 @@
         </div>
     </div>
 
-    <script src="{{ url_for('survey.static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
