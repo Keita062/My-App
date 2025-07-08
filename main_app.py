@@ -5,7 +5,7 @@ from datetime import datetime
 # 必要なモジュールをインポート
 from flask_survey_app.extensions import db
 from flask_survey_app.app import survey_bp
-from flask_survey_app.log_utils import Log # 新しく作成したLogモデルをインポート
+from flask_survey_app.log_utils import Log
 
 def create_app():
     app = Flask(
@@ -21,8 +21,7 @@ def create_app():
     # 1. アンケート用データベース (survey.db) の設定
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(survey_app_dir, 'survey.db')
     
-    # 【追加】2. ログ用データベース (log.db) の設定
-    # 'logs'というキーで、2つ目のDBの場所を指定します
+    # 2. ログ用データベース (log.db) の設定
     app.config['SQLALCHEMY_BINDS'] = {
         'logs': 'sqlite:///' + os.path.join(survey_app_dir, 'log.db')
     }
@@ -40,7 +39,7 @@ def create_app():
     def index():
         return render_template('index.html')
 
-    # 【追加】リクエスト後にログを記録する関数
+
     @app.after_request
     def log_response_info(response):
         # staticファイルへのリクエストはログの対象外にする
@@ -54,14 +53,20 @@ def create_app():
             method=request.method
         )
         # データベースセッションに追加してコミット
-        db.session.add(new_log)
-        db.session.commit()
+        with app.app_context():
+            db.session.add(new_log)
+            db.session.commit()
         
         return response
 
-    # --- データベースの作成 ---
-    with app.app_context():
-        # すべてのデータベース（survey.dbとlog.db）にテーブルを作成
-        db.create_all()
-
     return app
+
+# --- アプリケーションの実行 ---
+# このファイルが直接実行された場合にのみ、サーバーを起動する
+if __name__ == '__main__':
+    app = create_app()
+    with app.app_context():
+        # データベースとテーブルを作成
+        db.create_all()
+    # デバッグモードでアプリケーションを実行
+    app.run(debug=True, host='0.0.0.0', port=5001)
