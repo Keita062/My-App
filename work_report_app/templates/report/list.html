@@ -1,0 +1,54 @@
+<!-- work_report_app/templates/report/list.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日報一覧</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container list-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h1 style="margin-bottom: 0;">インターンシップ日報一覧</h1>
+            <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
+        </div>
+
+        <div class="text-center" style="margin-bottom: 2rem;">
+            <a href="{{ url_for('report.new_report') }}" class="btn btn-primary">新規日報を作成</a>
+        </div>
+
+        <ul class="survey-list">
+            {% for report in reports %}
+            <li>
+                <div class="list-item-content">
+                    <a href="{{ url_for('report.detail_report', id=report.id) }}" style="flex-grow: 1;">
+                        <p class="company-name">{{ report.report_date.strftime('%Y年%m月%d日') }}</p>
+                        <p class="details">
+                            ステータス: 
+                            {% if report.status == 1 %}
+                                <span style="color: green; font-weight: bold;">完了</span>
+                            {% else %}
+                                <span style="color: orange; font-weight: bold;">作成中</span>
+                            {% endif %}
+                        </p>
+                    </a>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <a href="{{ url_for('report.edit_report', id=report.id) }}" class="btn btn-secondary" style="padding: 0.25rem 0.75rem;">
+                            {% if report.status == 0 %}完了報告{% else %}編集{% endif %}
+                        </a>
+                        <form action="{{ url_for('report.delete_report', id=report.id) }}" method="post" onsubmit="return confirm('本当にこの日報を削除しますか？');">
+                            <button type="submit" class="btn btn-danger">削除</button>
+                        </form>
+                    </div>
+                </div>
+            </li>
+            {% else %}
+            <li>
+                <p>登録されている日報はありません。</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
