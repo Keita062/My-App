@@ -1,3 +1,4 @@
+<!-- flask_survey_app/templates/survey/detail.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -10,17 +11,22 @@
     <div class="container detail-container">
         
         <div class="card detail-header">
-            <h1 class="company-name" style="text-align: left; margin-bottom: 0.5rem;">{{ survey.company_name }}</h1>
-            <div class="details">
-                <p><strong>コース名:</strong> {{ survey.course_name or '未設定' }}</p>
-                <p><strong>打ち込み日:</strong> {{ survey.entry_date.strftime('%Y年%m月%d日') }}</p>
-                <p><strong>締切:</strong> {{ survey.deadline.strftime('%Y年%m月%d日') }}</p>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h1 class="company-name" style="text-align: left; margin-bottom: 0.5rem;">{{ survey.company_name }}</h1>
+                    <div class="details">
+                        <p><strong>コース名:</strong> {{ survey.course_name or '未設定' }}</p>
+                        <p><strong>打ち込み日:</strong> {{ survey.entry_date.strftime('%Y年%m月%d日') }}</p>
+                        <p><strong>締切:</strong> {{ survey.deadline.strftime('%Y年%m月%d日') }}</p>
+                    </div>
+                </div>
+                <a href="{{ url_for('index') }}" class="link" style="white-space: nowrap; margin-left: 1rem;">ポータルに戻る &rarr;</a>
             </div>
         </div>
 
         <div class="qa-container">
             {% for qa in survey.questions %}
-                <div class="card qa-block">
+                <div class="card qa-block" style="margin-top: 1rem;">
                     <h2>【質問】 {{ qa.question }}</h2>
                     <div class="qa-answer">
                         <p>{{ qa.answer or '(回答なし)' }}</p>

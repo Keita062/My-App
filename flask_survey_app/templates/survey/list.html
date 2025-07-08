@@ -1,47 +1,42 @@
+<!-- flask_survey_app/templates/survey/list.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>アンケート一覧</title>
-    <link rel="stylesheet" href="{{ url_for('survey.static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container list-container">
-        <h1 style="font-size: 1.875rem;">登録済みアンケート一覧</h1>
-
-        {% if surveys %}
-            <ul class="survey-list">
-                {% for survey in surveys %}
-                    <li>
-                        <div class="list-item-content">
-                            <a href="{{ url_for('survey.detail_survey', id=survey.id) }}">
-                                <p class="company-name">{{ survey.company_name }}</p>
-                                <p class="details">
-                                    {{ survey.course_name or 'コース未設定' }} | 
-                                    締切: {{ survey.deadline.strftime('%Y年%m月%d日') }} | 
-                                    入力日: {{ survey.entry_date.strftime('%Y年%m月%d日') }}
-                                </p>
-                            </a>
-                            <div class="list-item-actions">
-                                <a href="{{ url_for('survey.edit_survey', id=survey.id) }}" class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">編集</a>
-                                <form action="{{ url_for('survey.delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのアンケートを削除しますか？');">
-                                    <button type="submit" class="btn btn-danger">削除</button>
-                                </form>
-                            </div>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="card text-center">
-                <p>登録されているアンケートはありません。</p>
-            </div>
-        {% endif %}
-
-        <div class="text-center mt-6">
-            <a href="{{ url_for('survey.form') }}" class="btn btn-primary">新規登録する</a>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h1 style="margin-bottom: 0;">登録済みアンケート一覧</h1>
+            <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
         </div>
+
+        <div class="text-center" style="margin-bottom: 2rem;">
+            <a href="{{ url_for('survey.form') }}" class="btn btn-primary">新規アンケートを登録</a>
+        </div>
+
+        <ul class="survey-list">
+            {% for survey in surveys %}
+            <li>
+                <div class="list-item-content">
+                    <a href="{{ url_for('survey.detail_survey', id=survey.id) }}">
+                        <p class="company-name">{{ survey.company_name }}</p>
+                        <p class="details">締切: {{ survey.deadline.strftime('%Y年%m月%d日') }}</p>
+                    </a>
+                    <form action="{{ url_for('survey.delete_survey', id=survey.id) }}" method="post">
+                        <button type="submit" class="btn btn-danger">削除</button>
+                    </form>
+                </div>
+            </li>
+            {% else %}
+            <li>
+                <p>登録されているアンケートはありません。</p>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
 </body>
 </html>
