@@ -39,7 +39,6 @@ def create_app():
     def index():
         return render_template('index.html')
 
-
     @app.after_request
     def log_response_info(response):
         # staticファイルへのリクエストはログの対象外にする

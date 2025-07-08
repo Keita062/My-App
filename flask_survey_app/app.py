@@ -3,7 +3,7 @@ from datetime import datetime
 import re
 from .extensions import db 
 
-# --- データベースモデル（このファイル内で定義） ---
+# --- データベースモデル（変更なし） ---
 class Survey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     company_name = db.Column(db.String(100), nullable=False)
@@ -18,10 +18,11 @@ class QuestionAnswer(db.Model):
     answer = db.Column(db.Text, nullable=True)
     survey_id = db.Column(db.Integer, db.ForeignKey('survey.id'), nullable=False)
 
-# --- Blueprint定義 ---
-survey_bp = Blueprint('survey', __name__, template_folder='templates', static_folder='static')
-
-# --- ルーティング ---
+survey_bp = Blueprint(
+    'survey', 
+    __name__, 
+    template_folder='templates'
+)
 
 @survey_bp.route('/form', methods=['GET', 'POST'])
 def form():
@@ -52,11 +53,9 @@ def edit_survey(id):
         survey.entry_date = datetime.strptime(request.form['entry_date'], '%Y-%m-%d').date()
         survey.deadline = datetime.strptime(request.form['deadline'], '%Y-%m-%d').date()
         
-        # 既存の質問を一度すべて削除
         for qa in survey.questions:
             db.session.delete(qa)
             
-        # フォームの内容で新しい質問を再作成
         questions_text = request.form.getlist('questions[]')
         answers_text = request.form.getlist('answers[]')
         for q, a in zip(questions_text, answers_text):
