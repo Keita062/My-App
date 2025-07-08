@@ -1,4 +1,3 @@
-<!-- work_report_app/templates/report/detail.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -9,13 +8,13 @@
 </head>
 <body>
     <div class="container detail-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h1 style="margin-bottom: 0;">日報詳細</h1>
+        <div class="page-header">
+            <h1>日報詳細</h1>
             <a href="{{ url_for('report.list_reports') }}" class="link">&larr; 一覧に戻る</a>
         </div>
 
         <div class="card">
-            <pre style="white-space: pre-wrap; font-family: inherit; font-size: 1rem;">
+            <pre class="report-pre">
 【開始報告 {{ report.report_date.strftime('%Y/%m/%d') }}】
 ----------------------------
 ■ 予定業務時間: {{ report.scheduled_start_time }} - {{ report.scheduled_end_time }}
@@ -39,7 +38,7 @@
 {% endif %}
             </pre>
         </div>
-        <div class="text-center mt-6">
+        <div class="page-actions">
             <a href="{{ url_for('report.edit_report', id=report.id) }}" class="btn btn-primary">この日報を編集する</a>
         </div>
     </div>
