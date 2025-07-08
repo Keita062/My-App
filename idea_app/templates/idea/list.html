@@ -1,0 +1,87 @@
+<!-- idea_app/templates/idea/list.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アイディア一覧</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- 【追加】優先度ごとの色を定義するスタイル -->
+    <style>
+        .priority-high { color: red; }
+        .priority-medium { color: orange; }
+        .priority-low { color: green; }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 1024px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h1 style="margin-bottom: 0;">アイディア一覧</h1>
+            <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
+        </div>
+
+        <div class="card" style="margin-bottom: 2rem;">
+            <form method="get" action="{{ url_for('idea.list_ideas') }}">
+                <div style="display: flex; gap: 1rem; align-items: flex-end;">
+                    <div class="form-group" style="flex-grow: 1;">
+                        <label for="status">ステータスで絞り込み</label>
+                        <select id="status" name="status" onchange="this.form.submit()">
+                            <option value="">すべて</option>
+                            <option value="未着手" {% if current_status == '未着手' %}selected{% endif %}>未着手</option>
+                            <option value="実行中" {% if current_status == '実行中' %}selected{% endif %}>実行中</option>
+                            <option value="完了" {% if current_status == '完了' %}selected{% endif %}>完了</option>
+                            <option value="保留" {% if current_status == '保留' %}selected{% endif %}>保留</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex-grow: 1;">
+                        <label for="category">カテゴリで絞り込み</label>
+                        <select id="category" name="category" onchange="this.form.submit()">
+                            <option value="">すべて</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat }}" {% if current_category == cat %}selected{% endif %}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <a href="{{ url_for('idea.list_ideas') }}" class="btn btn-secondary">リセット</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="text-center" style="margin-bottom: 2rem;">
+            <a href="{{ url_for('idea.new_idea') }}" class="btn btn-primary">新しいアイディアを登録</a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
+            {% for idea in ideas %}
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <h2 style="font-size: 1.25rem; margin-top: 0; margin-bottom: 0.5rem;">{{ idea.title }}</h2>
+                    <!-- 【修正】優先度に応じてCSSクラスを割り当てる方式に変更 -->
+                    {% set priority_class = 'priority-low' %}
+                    {% if idea.priority == '高' %}
+                        {% set priority_class = 'priority-high' %}
+                    {% elif idea.priority == '中' %}
+                        {% set priority_class = 'priority-medium' %}
+                    {% endif %}
+                    <span class="priority {{ priority_class }}" style="font-weight: bold;">{{ idea.priority }}</span>
+                </div>
+                <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0;">
+                    <strong>カテゴリ:</strong> {{ idea.category or '未分類' }}<br>
+                    <strong>ステータス:</strong> {{ idea.status }}<br>
+                    <strong>目標期日:</strong> {{ idea.due_date.strftime('%Y-%m-%d') if idea.due_date else '未設定' }}
+                </p>
+                <p style="white-space: pre-wrap; background-color: #f9fafb; padding: 0.5rem; border-radius: 0.25rem;">{{ idea.details or '(詳細なし)' }}</p>
+                <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+                    <a href="{{ url_for('idea.edit_idea', id=idea.id) }}" class="btn btn-secondary" style="padding: 0.25rem 0.75rem;">編集</a>
+                    <form action="{{ url_for('idea.delete_idea', id=idea.id) }}" method="post" onsubmit="return confirm('本当にこのアイディアを削除しますか？');">
+                        <button type="submit" class="btn btn-danger">削除</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <p>登録されているアイディアはありません。</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
