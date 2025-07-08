@@ -11,7 +11,7 @@ payroll_bp = Blueprint(
     template_folder='templates'
 )
 
-# --- 給与単価の定義 ---
+# --- 給与単価の定義 (変更なし) ---
 PAY_RATES = {
     'REHATCH': {'hourly': 1170},
     '明光義塾': {
@@ -21,7 +21,6 @@ PAY_RATES = {
 }
 
 def calculate_salary(record):
-    """勤務記録から給与を計算する"""
     delta = record.end_time - record.start_time
     duration_minutes = delta.total_seconds() / 60
     record.duration_minutes = int(duration_minutes)
@@ -33,7 +32,6 @@ def calculate_salary(record):
     elif record.workplace == '明光義塾':
         work_type_details = PAY_RATES['明光義塾'].get(record.work_type)
         if work_type_details:
-            # 仕様書に基づき、単位時間あたりの給与で計算
             units = duration_minutes / work_type_details['minutes']
             salary = units * work_type_details['value']
             
@@ -46,12 +44,10 @@ def dashboard():
     """ダッシュボードを表示"""
     current_year = datetime.now().year
     
-    # 年間の合計給与
     total_salary = db.session.query(func.sum(WorkRecord.salary)).filter(
         extract('year', WorkRecord.work_date) == current_year
     ).scalar() or 0
 
-    # 月別の給与集計
     monthly_summary = db.session.query(
         extract('month', WorkRecord.work_date).label('month'),
         WorkRecord.workplace,
@@ -60,7 +56,6 @@ def dashboard():
         extract('year', WorkRecord.work_date) == current_year
     ).group_by('month', WorkRecord.workplace).all()
     
-    # データを整形
     monthly_data = {}
     for month, workplace, salary in monthly_summary:
         if month not in monthly_data:
@@ -68,17 +63,51 @@ def dashboard():
         monthly_data[month][workplace] = salary
         monthly_data[month]['total'] += salary
 
-    # 直近の勤務記録
     recent_records = WorkRecord.query.order_by(WorkRecord.start_time.desc()).limit(10).all()
 
     return render_template('payroll/dashboard.html',
                            total_salary=total_salary,
                            monthly_data=monthly_data,
-                           recent_records=recent_records)
+                           recent_records=recent_records,
+                           current_year=current_year) # 【追加】年をテンプレートに渡す
 
+# 月間詳細ページ用のルート
+@payroll_bp.route('/monthly/<int:year>/<int:month>')
+def monthly_detail(year, month):
+    """指定された月の詳細な勤務記録とサマリーを表示する"""
+    
+    # 指定された月の勤務記録を取得
+    records = WorkRecord.query.filter(
+        extract('year', WorkRecord.work_date) == year,
+        extract('month', WorkRecord.work_date) == month
+    ).order_by(WorkRecord.work_date.asc()).all()
+
+    # 月間合計を計算
+    total_salary = sum(r.salary for r in records)
+    total_duration = sum(r.duration_minutes for r in records)
+
+    # 勤務先ごとの合計を計算
+    workplace_summary = {
+        '明光義塾': {'salary': 0, 'duration': 0},
+        'REHATCH': {'salary': 0, 'duration': 0}
+    }
+    for r in records:
+        if r.workplace in workplace_summary:
+            workplace_summary[r.workplace]['salary'] += r.salary
+            workplace_summary[r.workplace]['duration'] += r.duration_minutes
+
+    return render_template('payroll/monthly_detail.html',
+                           year=year,
+                           month=month,
+                           records=records,
+                           total_salary=total_salary,
+                           total_duration=total_duration,
+                           workplace_summary=workplace_summary)
+
+
+# --- 勤務記録の追加・編集・削除  ---
 @payroll_bp.route('/record/new', methods=['GET', 'POST'])
 def new_record():
-    """新しい勤務記録を追加"""
     if request.method == 'POST':
         start_datetime = datetime.strptime(f"{request.form['work_date']} {request.form['start_time']}", '%Y-%m-%d %H:%M')
         end_datetime = datetime.strptime(f"{request.form['work_date']} {request.form['end_time']}", '%Y-%m-%d %H:%M')
@@ -86,7 +115,7 @@ def new_record():
         new_rec = WorkRecord(
             work_date=datetime.strptime(request.form['work_date'], '%Y-%m-%d').date(),
             workplace=request.form['workplace'],
-            work_type=request.form.get('work_type'), # getならキーがなくてもエラーにならない
+            work_type=request.form.get('work_type'),
             start_time=start_datetime,
             end_time=end_datetime
         )
@@ -99,7 +128,6 @@ def new_record():
 
 @payroll_bp.route('/record/edit/<int:id>', methods=['GET', 'POST'])
 def edit_record(id):
-    """勤務記録を編集"""
     record = WorkRecord.query.get_or_404(id)
     if request.method == 'POST':
         start_datetime = datetime.strptime(f"{request.form['work_date']} {request.form['start_time']}", '%Y-%m-%d %H:%M')
@@ -119,7 +147,6 @@ def edit_record(id):
 
 @payroll_bp.route('/record/delete/<int:id>', methods=['POST'])
 def delete_record(id):
-    """勤務記録を削除"""
     record = WorkRecord.query.get_or_404(id)
     db.session.delete(record)
     db.session.commit()

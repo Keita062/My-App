@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ year }}年{{ month }}月 給与詳細</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>{{ year }}年 {{ month }}月 給与詳細</h1>
+            <a href="{{ url_for('payroll.dashboard') }}" class="link">&larr; ダッシュボードに戻る</a>
+        </div>
+
+        <!-- 月間サマリー -->
+        <div class="monthly-summary-grid">
+            <div class="card text-center">
+                <h2>月間合計給与</h2>
+                <p class="payroll-total-salary">{{ "{:,.0f}".format(total_salary) }} 円</p>
+            </div>
+            <div class="card text-center">
+                <h2>月間合計勤務時間</h2>
+                <p class="payroll-total-salary">{{ (total_duration / 60)|round(1) }} 時間</p>
+            </div>
+            <div class="card">
+                <h2>勤務先別 内訳</h2>
+                <div class="pie-chart-container">
+                    <div class="pie-chart" style="--meiko-percent: {{ (workplace_summary['明光義塾'].salary / total_salary * 100)|round if total_salary > 0 else 0 }}%; --rehatch-percent: {{ (workplace_summary['REHATCH'].salary / total_salary * 100)|round if total_salary > 0 else 0 }}%;"></div>
+                    <ul class="pie-chart-legend">
+                        <li><span class="legend-color-meiko"></span>明光義塾: {{ "{:,.0f}".format(workplace_summary['明光義塾'].salary) }}円</li>
+                        <li><span class="legend-color-rehatch"></span>REHATCH: {{ "{:,.0f}".format(workplace_summary['REHATCH'].salary) }}円</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 月間勤務記録一覧 -->
+        <div class="card">
+            <h2>日別 勤務記録</h2>
+            <table class="payroll-table">
+                <thead>
+                    <tr>
+                        <th>日付</th>
+                        <th>勤務先</th>
+                        <th>業務内容</th>
+                        <th>勤務時間</th>
+                        <th>実働</th>
+                        <th>給与額</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.work_date.strftime('%m/%d') }}</td>
+                        <td>{{ record.workplace }}</td>
+                        <td>{{ record.work_type or '-' }}</td>
+                        <td>{{ record.start_time.strftime('%H:%M') }} - {{ record.end_time.strftime('%H:%M') }}</td>
+                        <td>{{ record.duration_minutes }}分</td>
+                        <td>{{ "{:,.0f}".format(record.salary) }} 円</td>
+                        <td>
+                            <div class="list-item-actions">
+                                <a href="{{ url_for('payroll.edit_record', id=record.id) }}" class="btn btn-secondary btn-sm">編集</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">この月の勤務記録はありません。</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

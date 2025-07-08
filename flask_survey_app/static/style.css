@@ -249,3 +249,44 @@ hr {
 .payroll-recent-list { list-style: none; padding: 0; }
 .payroll-recent-list li { display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-3) 0; border-bottom: 1px solid var(--color-border); }
 .payroll-recent-list li:last-child { border-bottom: none; }
+/* --- 給与計算アプリ --- */
+.payroll-summary-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+@media (min-width: 768px) { .payroll-summary-grid { grid-template-columns: 1fr 2fr; } }
+.payroll-total-salary { font-size: 2rem; font-weight: bold; color: var(--color-primary); }
+.progress-bar-group { margin-bottom: 1rem; }
+.progress-bar-group label { display: block; font-size: 0.875rem; margin-bottom: 0.25rem; color: var(--color-text-muted); }
+.progress-bar { width: 100%; height: 20px; background-color: var(--color-bg-body); border-radius: 10px; overflow: hidden; }
+.progress-bar-inner { height: 100%; background-color: var(--color-success); border-radius: 10px; transition: width 0.5s ease; }
+.payroll-table { width: 100%; border-collapse: collapse; }
+.payroll-table th, .payroll-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--color-border); }
+.payroll-table th { background-color: var(--color-bg-muted); }
+.payroll-table .month-link { text-decoration: none; font-weight: var(--font-weight-bold); }
+.payroll-recent-list { list-style: none; padding: 0; }
+.payroll-recent-list li { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border); }
+.payroll-recent-list li:last-child { border-bottom: none; }
+
+/* --- 【新規】月間詳細ページ --- */
+.monthly-summary-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+@media (min-width: 1024px) { .monthly-summary-grid { grid-template-columns: 1fr 1fr 2fr; } }
+.pie-chart-container { display: flex; align-items: center; gap: 1.5rem; }
+.pie-chart {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: conic-gradient(
+        var(--color-success) 0% var(--meiko-percent),
+        var(--color-payroll) var(--meiko-percent) var(--rehatch-percent)
+    );
+    flex-shrink: 0;
+}
+.pie-chart-legend { list-style: none; padding: 0; margin: 0; }
+.pie-chart-legend li { display: flex; align-items: center; margin-bottom: 0.5rem; }
+.pie-chart-legend span {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+.legend-color-meiko { background-color: var(--color-success); }
+.legend-color-rehatch { background-color: var(--color-payroll); }
