@@ -1,8 +1,6 @@
 import os
 from flask import Flask, render_template, request
 from datetime import datetime
-
-# 必要なモジュールをインポート
 from flask_survey_app.extensions import db
 from flask_survey_app.app import survey_bp
 from flask_survey_app.log_utils import Log
@@ -56,7 +54,7 @@ def create_app():
         """
         if request.path.startswith('/static'):
             return response
-         
+            
         new_log = Log(
             ip_address=request.remote_addr,
             path=request.path,
