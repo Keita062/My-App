@@ -1,22 +1,48 @@
+<!-- flask_survey_app/templates/index.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>アプリケーションポータル</title>
-    <!-- 【変更】Tailwindのscriptを削除し、CSSファイルを読み込む -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>アプリケーションポータル</h1>
         
         <div class="portal-grid">
+            <!-- アンケート管理アプリ -->
             <div class="card card-hover">
                 <h2 style="color: #4f46e5;">アンケート管理アプリ</h2>
-                <p>企業ごとのアンケート内容を登録し、管理することができます。</p>
-                <a href="{{ url_for('survey.list_surveys') }}" class="btn btn-primary">アプリへ移動</a>
+                <p>企業ごとのES内容を登録し、管理することができます。</p>
+                <a href="{{ url_for('survey.list_surveys') }}" class="btn btn-primary" style="margin-top: 1rem;">アプリへ移動</a>
             </div>
+
+            <!-- 【修正】日報アプリへのリンクを追加 -->
+            <div class="card card-hover">
+                <h2 style="color: #059669;">インターンシップ日報</h2>
+                <p>日々の業務内容や目標、反省を記録・管理します。</p>
+                <a href="{{ url_for('report.list_reports') }}" class="btn btn-success" style="margin-top: 1rem;">アプリへ移動</a>
+            </div>
+
+            <!-- 今後追加するアプリ用のプレースホルダー -->
+            <div class="card" style="background-color: #f9fafb; border-style: dashed;">
+                <h2 style="color: #6b7280;">アイディアフォーム (未実装)</h2>
+                <p>思いついたアイディアを記録します。</p>
+            </div>
+             <div class="card" style="background-color: #f9fafb; border-style: dashed;">
+                <h2 style="color: #6b7280;">給与計算 (未実装)</h2>
+                <p>アルバイトの給与を管理します。</p>
+            </div>
+
         </div>
     </div>
 </body>
