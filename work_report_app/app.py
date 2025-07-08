@@ -1,4 +1,3 @@
-# work_report_app/app.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from datetime import datetime
 from flask_survey_app.extensions import db
@@ -34,7 +33,7 @@ def new_report():
         return redirect(url_for('report.list_reports'))
     
     today_str = datetime.today().strftime('%Y-%m-%d')
-    return render_template('report/form.html', today=today_str)
+    return render_template('report/form.html', today=today_str, report=None)
 
 
 @report_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
