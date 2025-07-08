@@ -5,7 +5,9 @@ from flask_survey_app.extensions import db
 from flask_survey_app.app import survey_bp
 from flask_survey_app.log_utils import Log
 from work_report_app.app import report_bp 
-from work_report_app import models
+from work_report_app import models as report_models # エイリアスを設定
+from idea_app.app import idea_bp
+from idea_app import models as idea_models # エイリアスを設定
 
 def create_app():
     """
@@ -21,12 +23,12 @@ def create_app():
     basedir = os.path.abspath(os.path.dirname(__file__))
     survey_app_dir = os.path.join(basedir, 'flask_survey_app')
     report_app_dir = os.path.join(basedir, 'work_report_app')
-
-    # 1. アンケート用データベース (survey.db) の設定
+    idea_app_dir = os.path.join(basedir, 'idea_app')
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(survey_app_dir, 'survey.db')
     app.config['SQLALCHEMY_BINDS'] = {
         'logs': 'sqlite:///' + os.path.join(survey_app_dir, 'log.db'),
-        'report': 'sqlite:///' + os.path.join(report_app_dir, 'report.db')
+        'report': 'sqlite:///' + os.path.join(report_app_dir, 'report.db'),
+        'idea': 'sqlite:///' + os.path.join(idea_app_dir, 'idea.db')
     }
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -37,24 +39,18 @@ def create_app():
     # --- Blueprintの登録 ---
     app.register_blueprint(survey_bp, url_prefix='/survey') 
     app.register_blueprint(report_bp, url_prefix='/report')
+    app.register_blueprint(idea_bp, url_prefix='/idea')
     
     # --- ホームページのルート ---
     @app.route('/')
     def index():
-        """
-        ポータルトップページを表示
-        """
         return render_template('index.html')
 
     # --- リクエスト後にログを記録する関数 ---
     @app.after_request
     def log_response_info(response):
-        """
-        リクエストの情報をログデータベースに記録する
-        """
         if request.path.startswith('/static'):
             return response
-            
         new_log = Log(
             ip_address=request.remote_addr,
             path=request.path,
@@ -63,7 +59,6 @@ def create_app():
         with app.app_context():
             db.session.add(new_log)
             db.session.commit()
-        
         return response
 
     return app
