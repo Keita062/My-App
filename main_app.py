@@ -1,30 +1,32 @@
 import os
-from flask import Flask, render_template, request, jsonify 
+from flask import Flask, render_template, request, jsonify
 from datetime import datetime
 from flask_survey_app.extensions import db
-from flask_survey_app.app import survey_bp, Survey 
+from flask_survey_app.app import survey_bp, Survey
 from flask_survey_app.log_utils import Log
-from work_report_app.app import report_bp 
-from work_report_app.models import Report 
+from work_report_app.app import report_bp
+from work_report_app.models import Report
 from idea_app.app import idea_bp
-from idea_app.models import Idea 
+from idea_app.models import Idea
 from payroll_app.app import payroll_bp
 from payroll_app import models as payroll_models
 
 def create_app():
     app = Flask(
-        __name__, 
+        __name__,
         template_folder='flask_survey_app/templates',
         static_folder='flask_survey_app/static'
     )
 
-    # --- アプリケーションの設定  ---
+    # --- アプリケーションの設定 ---
     basedir = os.path.abspath(os.path.dirname(__file__))
-    # (各アプリのディレクトリパス定義)
     survey_app_dir = os.path.join(basedir, 'flask_survey_app')
     report_app_dir = os.path.join(basedir, 'work_report_app')
     idea_app_dir = os.path.join(basedir, 'idea_app')
     payroll_app_dir = os.path.join(basedir, 'payroll_app')
+
+    
+    app.secret_key = 'my-super-secret-key-for-development'
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(survey_app_dir, 'survey.db')
     app.config['SQLALCHEMY_BINDS'] = {
@@ -36,33 +38,25 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
-    # --- Blueprintの登録 (変更なし) ---
-    app.register_blueprint(survey_bp, url_prefix='/survey') 
+    app.register_blueprint(survey_bp, url_prefix='/survey')
     app.register_blueprint(report_bp, url_prefix='/report')
     app.register_blueprint(idea_bp, url_prefix='/idea')
     app.register_blueprint(payroll_bp, url_prefix='/payroll')
-    
-    # --- ルート定義 ---
     @app.route('/')
     def index():
         return render_template('index.html')
 
-    # カレンダー用のイベントデータを返すAPIエンドポイント
     @app.route('/api/events')
     def get_events():
         events = []
-        
-        # 1. アイディアフォームのイベントを取得
         ideas = Idea.query.all()
         for idea in ideas:
-            # 記入日
             events.append({
                 'title': f"【ｱｲﾃﾞｨｱ】{idea.title}",
                 'start': idea.creation_date.isoformat(),
                 'url': f'/idea/edit/{idea.id}',
                 'className': 'event-idea'
             })
-            # 目標期日
             if idea.due_date:
                 events.append({
                     'title': f"【目標】{idea.title}",
@@ -70,8 +64,6 @@ def create_app():
                     'url': f'/idea/edit/{idea.id}',
                     'className': 'event-idea-due'
                 })
-
-        # 2. ES記入フォームの締切を取得
         surveys = Survey.query.all()
         for survey in surveys:
             if survey.deadline:
@@ -81,17 +73,14 @@ def create_app():
                     'url': f'/survey/detail/{survey.id}',
                     'className': 'event-survey'
                 })
-        
-        # 3. 日報の報告日を取得
         reports = Report.query.all()
         for report in reports:
             events.append({
                 'title': "【日報】提出",
                 'start': report.report_date.isoformat(),
-                'url': f'/report/list_reports', # 詳細がないので一覧へ
+                'url': f'/report/list_reports',
                 'className': 'event-report'
             })
-
         return jsonify(events)
 
     @app.after_request
