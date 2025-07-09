@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アンケート一覧</title>
+    <title>ES一覧</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container list-container">
         <div class="page-header">
-            <h1>登録済みアンケート一覧</h1>
+            <h1>登録済みES一覧</h1>
             <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
         </div>
         <div class="text-center mb-2">
-            <a href="{{ url_for('survey.form') }}" class="btn btn-primary">新規アンケートを登録</a>
+            <a href="{{ url_for('survey.form') }}" class="btn btn-primary">新規ESを登録</a>
         </div>
         <ul class="generic-list">
             {% for survey in surveys %}
@@ -23,13 +23,16 @@
                         <p class="item-title">{{ survey.company_name }}</p>
                         <p class="item-details">締切: {{ survey.deadline.strftime('%Y年%m月%d日') }}</p>
                     </a>
-                    <form class="list-item-actions" action="{{ url_for('survey.delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのアンケートを削除しますか？');">
-                        <button type="submit" class="btn btn-danger btn-sm">削除</button>
-                    </form>
+                    <div class="list-item-actions">
+                        <a href="{{ url_for('survey.edit_survey', id=survey.id) }}" class="btn btn-secondary btn-sm">編集</a>
+                        <form action="{{ url_for('survey.delete_survey', id=survey.id) }}" method="post" onsubmit="return confirm('本当にこのESを削除しますか？');">
+                            <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                        </form>
+                    </div>
                 </div>
             </li>
             {% else %}
-            <li><p>登録されているアンケートはありません。</p></li>
+            <li><p>登録されているESはありません。</p></li>
             {% endfor %}
         </ul>
     </div>
