@@ -3,34 +3,34 @@
    =============================================== */
 :root {
   /* --- カラーパレット --- */
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
-  --color-secondary: #6b7280;
-  --color-secondary-hover: #4b5563;
-  --color-success: #22c55e;
-  --color-success-hover: #16a34a;
-  --color-danger: #ef4444;
-  --color-danger-hover: #dc2626;
-  --color-idea: #f59e0b;
-  --color-idea-hover: #d97706;
-  --color-payroll: #06b6d4;
-  --color-payroll-hover: #0891b2;
+  --color-primary: #4f46e5;         /* Indigo 600 */
+  --color-primary-hover: #4338ca;   /* Indigo 700 */
+  --color-secondary: #6b7280;       /* Gray 500 */
+  --color-secondary-hover: #4b5563; /* Gray 600 */
+  --color-success: #22c55e;         /* Green 500 */
+  --color-success-hover: #16a34a;   /* Green 600 */
+  --color-danger: #ef4444;          /* Red 500 */
+  --color-danger-hover: #dc2626;    /* Red 600 */
+  --color-idea: #f59e0b;            /* Amber 500 */
+  --color-idea-hover: #d97706;      /* Amber 600 */
+  --color-payroll: #06b6d4;         /* Cyan 500 */
+  --color-payroll-hover: #0891b2;   /* Cyan 600 */
 
   /* --- テキストカラー --- */
-  --color-text-base: #1f2937;
-  --color-text-muted: #6b7280;
-  --color-text-heading: #374151;
-  --color-text-on-primary: #ffffff;
+  --color-text-base: #1f2937;       /* Gray 800 */
+  --color-text-muted: #6b7280;      /* Gray 500 */
+  --color-text-heading: #374151;    /* Gray 700 */
+  --color-text-on-primary: #ffffff; /* White */
   --color-text-link: var(--color-primary);
   --color-text-link-hover: var(--color-primary-hover);
 
   /* --- 背景・サーフェスカラー --- */
-  --color-bg-body: #f3f4f6;
-  --color-bg-surface: #ffffff;
-  --color-bg-muted: #f9fafb;
+  --color-bg-body: #f3f4f6;         /* Gray 100 */
+  --color-bg-surface: #ffffff;      /* White */
+  --color-bg-muted: #f9fafb;        /* Gray 50 */
 
   /* --- ボーダー・区切り線 --- */
-  --color-border: #e5e7eb;
+  --color-border: #e5e7eb;          /* Gray 200 */
   --color-border-focus: var(--color-primary);
 
   /* --- タイポグラフィ --- */
@@ -204,6 +204,12 @@ hr {
 .detail-header-main .link { white-space: nowrap; margin-left: var(--spacing-4); }
 .qa-block { margin-top: var(--spacing-4); }
 
+/* --- ES記入フォーム (旧アンケート) --- */
+.question-pair { position: relative; border-top: 1px solid var(--color-border); padding-top: var(--spacing-6); margin-top: var(--spacing-6); }
+#questions-container .question-pair:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+.btn-delete-question { position: absolute; top: 0; right: 0; background: none; border: none; color: var(--color-danger); font-size: 1.5rem; font-weight: bold; cursor: pointer; padding: var(--spacing-2); line-height: 1; }
+.btn-delete-question:hover { color: var(--color-danger-hover); }
+
 /* --- 日報アプリ --- */
 .report-container { max-width: var(--container-width-wide); }
 .report-select-grid { display: grid; grid-template-columns: 1fr; gap: var(--spacing-6); }
@@ -249,26 +255,11 @@ hr {
 .payroll-recent-list { list-style: none; padding: 0; }
 .payroll-recent-list li { display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-3) 0; border-bottom: 1px solid var(--color-border); }
 .payroll-recent-list li:last-child { border-bottom: none; }
-/* --- 給与計算アプリ --- */
-.payroll-summary-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem; }
-@media (min-width: 768px) { .payroll-summary-grid { grid-template-columns: 1fr 2fr; } }
-.payroll-total-salary { font-size: 2rem; font-weight: bold; color: var(--color-primary); }
-.progress-bar-group { margin-bottom: 1rem; }
-.progress-bar-group label { display: block; font-size: 0.875rem; margin-bottom: 0.25rem; color: var(--color-text-muted); }
-.progress-bar { width: 100%; height: 20px; background-color: var(--color-bg-body); border-radius: 10px; overflow: hidden; }
-.progress-bar-inner { height: 100%; background-color: var(--color-success); border-radius: 10px; transition: width 0.5s ease; }
-.payroll-table { width: 100%; border-collapse: collapse; }
-.payroll-table th, .payroll-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--color-border); }
-.payroll-table th { background-color: var(--color-bg-muted); }
-.payroll-table .month-link { text-decoration: none; font-weight: var(--font-weight-bold); }
-.payroll-recent-list { list-style: none; padding: 0; }
-.payroll-recent-list li { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border); }
-.payroll-recent-list li:last-child { border-bottom: none; }
 
-/* --- 【新規】月間詳細ページ --- */
-.monthly-summary-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+/* --- 給与計算アプリ (月間詳細) --- */
+.monthly-summary-grid { display: grid; grid-template-columns: 1fr; gap: var(--spacing-6); margin-bottom: var(--spacing-8); }
 @media (min-width: 1024px) { .monthly-summary-grid { grid-template-columns: 1fr 1fr 2fr; } }
-.pie-chart-container { display: flex; align-items: center; gap: 1.5rem; }
+.pie-chart-container { display: flex; align-items: center; gap: var(--spacing-6); }
 .pie-chart {
     width: 100px;
     height: 100px;
@@ -280,13 +271,13 @@ hr {
     flex-shrink: 0;
 }
 .pie-chart-legend { list-style: none; padding: 0; margin: 0; }
-.pie-chart-legend li { display: flex; align-items: center; margin-bottom: 0.5rem; }
+.pie-chart-legend li { display: flex; align-items: center; margin-bottom: var(--spacing-2); }
 .pie-chart-legend span {
     display: inline-block;
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    margin-right: 0.5rem;
+    margin-right: var(--spacing-2);
 }
 .legend-color-meiko { background-color: var(--color-success); }
 .legend-color-rehatch { background-color: var(--color-payroll); }
