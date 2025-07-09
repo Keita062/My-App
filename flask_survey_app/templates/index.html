@@ -5,13 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>アプリケーションポータル</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
 </head>
 <body>
     <div class="container">
         <h1>アプリケーションポータル</h1>
+
+        <div class="card mb-2">
+            <div id="calendar"></div>
+        </div>
+
         <div class="portal-grid">
             <div class="card card-hover portal-card">
-                <h2 class="color-survey">アンケート管理アプリ</h2>
+                <h2 class="color-survey">ES記入フォーム</h2>
                 <p>企業ごとのES内容を登録し、管理することができます。</p>
                 <a href="{{ url_for('survey.list_surveys') }}" class="btn btn-primary">アプリへ移動</a>
             </div>
@@ -32,5 +38,33 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'ja', 
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek'
+                },
+                buttonText: {
+                    today: '今日',
+                    month: '月',
+                    week: '週',
+                },
+                events: '/api/events', 
+                eventClick: function(info) {
+                    info.jsEvent.preventDefault(); 
+                    if (info.event.url) {
+                        window.location.href = info.event.url; // 設定されたURLに遷移
+                    }
+                }
+            });
+            calendar.render();
+        });
+    </script>
 </body>
 </html>
