@@ -281,3 +281,39 @@ hr {
 }
 .legend-color-meiko { background-color: var(--color-success); }
 .legend-color-rehatch { background-color: var(--color-payroll); }
+
+/* --- カレンダー --- */
+#calendar {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.fc .fc-button-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+.fc .fc-button-primary:hover {
+    background-color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+}
+.fc .fc-button-primary:active {
+    background-color: var(--color-primary-hover) !important;
+    border-color: var(--color-primary-hover) !important;
+}
+/* イベントごとの色分け */
+.event-idea {
+    background-color: var(--color-idea) !important;
+    border-color: var(--color-idea) !important;
+    color: var(--color-text-base) !important;
+}
+.event-idea-due {
+    background-color: var(--color-danger) !important;
+    border-color: var(--color-danger) !important;
+}
+.event-survey {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+}
+.event-report {
+    background-color: var(--color-success) !important;
+    border-color: var(--color-success) !important;
+}
