@@ -54,6 +54,7 @@
                 <p class="details-meta">
                     <strong>カテゴリ:</strong> {{ idea.category or '未分類' }}<br>
                     <strong>ステータス:</strong> {{ idea.status }}<br>
+                    <strong>記入日:</strong> {{ idea.creation_date.strftime('%Y/%m/%d') }}<br>
                     <strong>目標期日:</strong> {{ idea.due_date.strftime('%Y-%m-%d') if idea.due_date else '未設定' }}
                 </p>
                 <p class="details-text">{{ idea.details or '(詳細なし)' }}</p>
