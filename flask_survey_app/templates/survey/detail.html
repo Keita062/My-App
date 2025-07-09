@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>「{{ survey.company_name }}」のアンケート詳細</title>
+    <title>「{{ survey.company_name }}」のES詳細</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -33,7 +33,7 @@
         </div>
         <div class="page-actions">
             <a href="{{ url_for('survey.list_surveys') }}" class="link">&larr; 一覧に戻る</a>
-            <a href="{{ url_for('survey.edit_survey', id=survey.id) }}" class="btn btn-primary">このアンケートを編集する</a>
+            <a href="{{ url_for('survey.edit_survey', id=survey.id) }}" class="btn btn-primary">このESを編集する</a>
         </div>
     </div>
 </body>
