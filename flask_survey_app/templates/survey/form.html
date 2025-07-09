@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アンケートフォーム</title>
+    <title>ES記入フォーム</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container form-container">
         <div class="page-header">
-            <h1>アンケート登録</h1>
+            <h1>ES記入フォーム</h1>
             <a href="{{ url_for('survey.list_surveys') }}" class="link">&larr; 一覧に戻る</a>
         </div>
         <form id="survey-form" action="{{ url_for('survey.form') }}" method="post" class="card">
@@ -52,16 +52,6 @@
                 <button type="submit" class="btn btn-primary">登録する</button>
             </div>
         </form>
-    </div>
-    <div id="confirmation-modal" class="modal">
-        <div class="modal-content">
-            <h3>登録の確認</h3>
-            <p id="modal-text"></p>
-            <div class="modal-actions">
-                <button id="confirm-btn" class="btn btn-primary">OK</button>
-                <button id="cancel-btn" class="btn btn-secondary">キャンセル</button>
-            </div>
-        </div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
