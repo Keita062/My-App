@@ -1,6 +1,5 @@
 # main_app.py
 import os
-# 【修正】url_for をインポートリストに追加
 from flask import Flask, render_template, request, jsonify, url_for
 from datetime import datetime
 
