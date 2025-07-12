@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ company.company_name }} - 企業研究</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container detail-container">
+        <div class="page-header">
+            <h1>{{ company.company_name }}</h1>
+            <a href="{{ url_for('research.list_companies') }}" class="link">&larr; 一覧に戻る</a>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-main-content">
+                <!-- 企業分析メモ -->
+                <div class="card">
+                    <h2>企業分析メモ</h2>
+                    <dl class="detail-list">
+                        <dt>強み・特徴</dt><dd>{{ company.strength_features or '未記入' }}</dd>
+                        <dt>弱み・課題</dt><dd>{{ company.weakness_issues or '未記入' }}</dd>
+                        <dt>社風・文化</dt><dd>{{ company.culture or '未記入' }}</dd>
+                        <dt>最近のニュース</dt><dd>{{ company.recent_news or '未記入' }}</dd>
+                        <dt>フリーメモ</dt><dd>{{ company.free_memo or '未記入' }}</dd>
+                    </dl>
+                </div>
+                <!-- 選考イベント記録 -->
+                <div class="card">
+                    <h2>選考イベント記録</h2>
+                     <dl class="detail-list">
+                        <dt>説明会・イベントメモ</dt><dd>{{ company.event_memo or '未記入' }}</dd>
+                        <dt>面接の記録</dt><dd>{{ company.interview_memo or '未記入' }}</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="detail-sidebar">
+                <!-- 基本情報 -->
+                <div class="card">
+                    <h2>基本情報</h2>
+                    <dl class="detail-list">
+                        <dt>業界</dt><dd>{{ company.industry or '未設定' }}</dd>
+                        <dt>公式サイト</dt><dd><a href="{{ company.website_url }}" target="_blank" class="link">{{ company.website_url }}</a></dd>
+                        <dt>採用サイト</dt><dd><a href="{{ company.recruit_url }}" target="_blank" class="link">{{ company.recruit_url }}</a></dd>
+                    </dl>
+                </div>
+                <!-- 就活管理 -->
+                <div class="card">
+                    <h2>就活管理</h2>
+                    <dl class="detail-list">
+                        <dt>選考ステータス</dt><dd>{{ company.selection_status }}</dd>
+                        <dt>志望度</dt><dd>{{ company.interest_level }}</dd>
+                        <dt>応募職種</dt><dd>{{ company.applied_position or '未設定' }}</dd>
+                        <dt>ES締切</dt><dd>{{ company.es_deadline.strftime('%Y年%m月%d日') if company.es_deadline else '未設定' }}</dd>
+                        <dt>面接日</dt><dd>{{ company.interview_date.strftime('%Y年%m月%d日') if company.interview_date else '未設定' }}</dd>
+                    </dl>
+                </div>
+                 <!-- マイページ情報 -->
+                <div class="card">
+                    <h2>マイページ情報</h2>
+                    <dl class="detail-list">
+                        <dt>ID/Email</dt><dd>{{ company.mypage_id or '未設定' }}</dd>
+                        <dt>パスワード</dt><dd>{{ company.mypage_password or '未設定' }}</dd>
+                    </dl>
+                </div>
+                <div class="page-actions">
+                    <a href="{{ url_for('research.edit_company', id=company.id) }}" class="btn btn-primary">編集する</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

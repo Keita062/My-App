@@ -63,6 +63,11 @@
   --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --transition-base: all 0.2s ease-in-out;
+
+  /* ... */
+  --color-research: #8b5cf6;      /* Violet 500 */
+  --color-research-hover: #7c3aed;/* Violet 600 */
+  /* ... */
 }
 
 /* ===============================================
@@ -344,4 +349,99 @@ hr {
 
 #add-task-btn {
     margin-top: 0; 
+}
+
+/* (既存のボタンスタイルは省略) */
+.btn-research { background-color: var(--color-research); }
+.btn-research:hover { background-color: var(--color-research-hover); }
+
+/* (既存のポータルカードスタイルは省略) */
+.portal-card .color-research { color: var(--color-research); }
+
+/* --- 【新規】企業研究ツール --- */
+.filter-bar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-4);
+    align-items: flex-end;
+}
+.filter-bar-grid .form-actions {
+    grid-column: 1 / -1; /* 全幅を占める */
+    justify-content: flex-start;
+}
+@media (min-width: 1024px) {
+    .filter-bar-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+    .filter-bar-grid .form-actions { grid-column: auto; }
+}
+
+.research-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--spacing-6);
+}
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+.research-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.priority-tag {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--border-radius-sm);
+    color: var(--color-text-on-primary);
+}
+.priority-高 { background-color: var(--color-danger); }
+.priority-中 { background-color: var(--color-idea); }
+.priority-低 { background-color: var(--color-secondary); }
+.status-badge {
+    display: inline-block;
+    background-color: var(--color-bg-muted);
+    color: var(--color-text-muted);
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: 9999px;
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-4);
+}
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+}
+@media (min-width: 1024px) {
+    .detail-grid { grid-template-columns: 2fr 1fr; }
+}
+.detail-main-content, .detail-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+}
+.detail-list dt {
+    font-weight: var(--font-weight-bold);
+    margin-top: var(--spacing-4);
+    color: var(--color-text-heading);
+}
+.detail-list dd {
+    margin-left: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+    color: var(--color-text-base);
+}
+.detail-list dd:first-of-type { margin-top: 0; }
+.form-section h3 {
+    margin-top: var(--spacing-8);
+    border-bottom: 2px solid var(--color-primary);
+    padding-bottom: var(--spacing-2);
+}
+.form-section:first-child h3 { margin-top: 0; }
+
+/* --- カレンダーのイベント色を追加 --- */
+.event-interview {
+    background-color: var(--color-research) !important;
+    border-color: var(--color-research) !important;
 }
