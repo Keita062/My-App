@@ -28,11 +28,11 @@
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>予定業務時間</label>
+                        <label>予定業務時間（開始）</label>
                         <input type="time" name="start_time" required>
                     </div>
                      <div class="form-group">
-                        <label>&nbsp;</label>
+                        <label>予定業務時間（終了）</label>
                         <input type="time" name="end_time" required>
                     </div>
                 </div>
@@ -40,16 +40,15 @@
                     <label>予定業務内容</label>
                     <div id="tasks-container">
                         <!-- 初期入力欄 -->
-                        <div class="form-grid task-entry">
-                            <div class="form-group task-description">
-                                <input type="text" name="task_descriptions[]" placeholder="タスク内容" required>
-                            </div>
-                            <div class="form-group task-duration">
-                                <input type="number" name="task_durations[]" placeholder="所要時間(分)" required>
-                            </div>
+                        <div class="task-entry">
+                            <input type="text" name="task_descriptions[]" placeholder="タスク内容" required>
+                            <input type="number" name="task_durations[]" placeholder="所要時間(分)" required>
+                            <button type="button" class="btn btn-danger btn-sm btn-delete-task">削除</button>
                         </div>
                     </div>
-                    <button type="button" id="add-task-btn" class="btn btn-secondary btn-sm">タスクを追加</button>
+                </div>
+                <div class="form-group">
+                     <button type="button" id="add-task-btn" class="btn btn-secondary btn-sm">タスクを追加</button>
                 </div>
                 <div class="form-group">
                     <label for="goals">業務目標</label>
@@ -60,26 +59,25 @@
                 <h2>【完了報告】</h2>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>実施業務時間</label>
+                        <label>実施業務時間（開始）</label>
                         <input type="time" name="start_time" required>
                     </div>
                     <div class="form-group">
-                        <label>&nbsp;</label>
+                        <label>実施業務時間（終了）</label>
                         <input type="time" name="end_time" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>実施業務内容</label>
                     <div id="tasks-container">
-                        <div class="form-grid task-entry">
-                            <div class="form-group task-description">
-                                <input type="text" name="task_descriptions[]" placeholder="タスク内容" required>
-                            </div>
-                            <div class="form-group task-duration">
-                                <input type="number" name="task_durations[]" placeholder="所要時間(分)" required>
-                            </div>
+                        <div class="task-entry">
+                            <input type="text" name="task_descriptions[]" placeholder="タスク内容" required>
+                            <input type="number" name="task_durations[]" placeholder="所要時間(分)" required>
+                            <button type="button" class="btn btn-danger btn-sm btn-delete-task">削除</button>
                         </div>
                     </div>
+                </div>
+                 <div class="form-group">
                     <button type="button" id="add-task-btn" class="btn btn-secondary btn-sm">タスクを追加</button>
                 </div>
                 <div class="form-group">

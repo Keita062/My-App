@@ -317,3 +317,31 @@ hr {
     background-color: var(--color-success) !important;
     border-color: var(--color-success) !important;
 }
+
+/* --- 日報アプリ（タスク管理対応） --- */
+.report-divider {
+    border: 0;
+    height: 1px;
+    background-color: var(--color-border);
+    margin: var(--spacing-4) 0;
+}
+.report-task-list {
+    list-style: disc;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.task-entry {
+    display: grid;
+    grid-template-columns: 1fr auto 80px; 
+    gap: var(--spacing-2);
+    align-items: center;
+    margin-bottom: var(--spacing-2);
+}
+.task-entry input {
+    margin-bottom: 0; 
+}
+
+#add-task-btn {
+    margin-top: 0; 
+}
