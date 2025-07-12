@@ -20,6 +20,7 @@
         </div>
         <form method="post" class="card">
             {% if form_type == 'start' %}
+                <!-- 開始報告フォーム -->
                 <h2>【開始報告】</h2>
                 <div class="form-group">
                     <label for="report_date">日付</label>
@@ -27,7 +28,7 @@
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>■ 予定業務時間</label>
+                        <label>予定業務時間</label>
                         <input type="time" name="start_time" required>
                     </div>
                      <div class="form-group">
@@ -36,18 +37,30 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="scheduled_tasks">■ 予定業務内容</label>
-                    <textarea id="scheduled_tasks" name="scheduled_tasks" rows="4" required></textarea>
+                    <label>予定業務内容</label>
+                    <div id="tasks-container">
+                        <!-- 初期入力欄 -->
+                        <div class="form-grid task-entry">
+                            <div class="form-group task-description">
+                                <input type="text" name="task_descriptions[]" placeholder="タスク内容" required>
+                            </div>
+                            <div class="form-group task-duration">
+                                <input type="number" name="task_durations[]" placeholder="所要時間(分)" required>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="add-task-btn" class="btn btn-secondary btn-sm">タスクを追加</button>
                 </div>
                 <div class="form-group">
-                    <label for="goals">■ 業務目標</label>
+                    <label for="goals">業務目標</label>
                     <textarea id="goals" name="goals" rows="3" required></textarea>
                 </div>
             {% else %}
+                <!-- 完了報告フォーム -->
                 <h2>【完了報告】</h2>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>■ 実施業務時間</label>
+                        <label>実施業務時間</label>
                         <input type="time" name="start_time" required>
                     </div>
                     <div class="form-group">
@@ -56,11 +69,21 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="completed_tasks">■ 実施業務内容</label>
-                    <textarea id="completed_tasks" name="completed_tasks" rows="4" required></textarea>
+                    <label>実施業務内容</label>
+                    <div id="tasks-container">
+                        <div class="form-grid task-entry">
+                            <div class="form-group task-description">
+                                <input type="text" name="task_descriptions[]" placeholder="タスク内容" required>
+                            </div>
+                            <div class="form-group task-duration">
+                                <input type="number" name="task_durations[]" placeholder="所要時間(分)" required>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="add-task-btn" class="btn btn-secondary btn-sm">タスクを追加</button>
                 </div>
                 <div class="form-group">
-                    <label for="reflection">■ 振り返り</label>
+                    <label for="reflection">反省・考察</label>
                     <textarea id="reflection" name="reflection" rows="4" required></textarea>
                 </div>
             {% endif %}
@@ -69,5 +92,6 @@
             </div>
         </form>
     </div>
+    <script src="{{ url_for('report.static', filename='js/report_form.js') }}"></script>
 </body>
 </html>

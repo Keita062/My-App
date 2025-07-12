@@ -32,27 +32,55 @@
                     </form>
                 </div>
                 <div class="report-grid">
+                    <!-- 開始報告 -->
                     <div class="card">
-                        <h4>【開始報告】</h4>
+                        <h4>【開始報告 {{ report.report_date.strftime('%m/%d') }}】</h4>
                         <dl class="report-details">
                             <dt>予定業務時間</dt>
-                            <dd>{{ report.start_scheduled_time or '未記入' }}</dd>
+                            <!-- 【修正】未記入の場合に区切り線を表示 -->
+                            <dd>{{ report.start_scheduled_time | default('====================') }}</dd>
+                            <hr class="report-divider">
                             <dt>予定業務内容</dt>
-                            <dd>{{ report.start_scheduled_tasks or '未記入' }}</dd>
+                            <dd>
+                                <ul class="report-task-list">
+                                    {% for task in report.start_tasks %}
+                                    <li>{{ task.desc }} ({{ task.duration }}分)</li>
+                                    {% else %}
+                                    <!-- 【修正】未記入の場合に区切り線を表示 -->
+                                    <li>====================</li>
+                                    {% endfor %}
+                                </ul>
+                            </dd>
+                            <hr class="report-divider">
                             <dt>業務目標</dt>
-                            <dd>{{ report.start_goals or '未記入' }}</dd>
+                            <!-- 【修正】未記入の場合に区切り線を表示 -->
+                            <dd>{{ report.start_goals | default('====================', true) }}</dd>
                         </dl>
                     </div>
+                    <!-- 完了報告 -->
                     <div class="card">
-                        <h4>【完了報告】</h4>
+                        <h4>【完了報告 {{ report.report_date.strftime('%m/%d') }}】</h4>
                         {% if report.end_completed_tasks %}
                         <dl class="report-details">
                             <dt>業務時間</dt>
-                            <dd>{{ report.end_actual_time }}</dd>
+                            <!-- 【修正】未記入の場合に区切り線を表示 -->
+                            <dd>{{ report.end_actual_time | default('====================') }}</dd>
+                            <hr class="report-divider">
                             <dt>実施業務内容</dt>
-                            <dd>{{ report.end_completed_tasks }}</dd>
+                            <dd>
+                                <ul class="report-task-list">
+                                    {% for task in report.end_tasks %}
+                                    <li>{{ task.desc }} ({{ task.duration }}分)</li>
+                                    {% else %}
+                                    <!-- 【修正】未記入の場合に区切り線を表示 -->
+                                    <li>====================</li>
+                                    {% endfor %}
+                                </ul>
+                            </dd>
+                            <hr class="report-divider">
                             <dt>反省</dt>
-                            <dd>{{ report.end_reflection }}</dd>
+                            <!-- 【修正】未記入の場合に区切り線を表示 -->
+                            <dd>{{ report.end_reflection | default('====================', true) }}</dd>
                         </dl>
                         {% else %}
                         <div class="report-not-filled">
