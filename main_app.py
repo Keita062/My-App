@@ -1,12 +1,10 @@
-# main_app.py
 import os
 from flask import Flask, render_template, request, jsonify, url_for
 from datetime import datetime
 
 # --- 各アプリケーションのモジュールをインポート ---
 from flask_survey_app.extensions import db
-# 【修正】Surveyモデルを正しい場所からインポート
-from flask_survey_app.app import survey_bp, Survey 
+from flask_survey_app.app import survey_bp, Survey
 from flask_survey_app.log_utils import Log
 
 from work_report_app.app import report_bp 
@@ -20,6 +18,9 @@ from payroll_app import models as payroll_models
 
 from research_app.app import research_bp
 from research_app.models import Company
+
+# from memo_app.app import memo_bp
+# from memo_app.models import Memo
 
 def create_app():
     """
@@ -42,6 +43,7 @@ def create_app():
     idea_app_dir = os.path.join(basedir, 'idea_app')
     payroll_app_dir = os.path.join(basedir, 'payroll_app')
     research_app_dir = os.path.join(basedir, 'research_app')
+    memo_app_dir = os.path.join(basedir, 'memo_app')
 
     # --- データベース設定 ---
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(survey_app_dir, 'survey.db')
@@ -50,7 +52,8 @@ def create_app():
         'report': 'sqlite:///' + os.path.join(report_app_dir, 'report.db'),
         'idea': 'sqlite:///' + os.path.join(idea_app_dir, 'idea.db'),
         'payroll': 'sqlite:///' + os.path.join(payroll_app_dir, 'payroll.db'),
-        'research': 'sqlite:///' + os.path.join(research_app_dir, 'research.db')
+        'research': 'sqlite:///' + os.path.join(research_app_dir, 'research.db'),
+        'memo': 'sqlite:///' + os.path.join(memo_app_dir, 'memo.db')
     }
     
     # --- 拡張機能の初期化 ---
@@ -62,6 +65,7 @@ def create_app():
     app.register_blueprint(idea_bp, url_prefix='/idea')
     app.register_blueprint(payroll_bp, url_prefix='/payroll')
     app.register_blueprint(research_bp, url_prefix='/research')
+    # app.register_blueprint(memo_bp, url_prefix='/memo')
     
     # --- ルート定義 ---
     @app.route('/')
