@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メモ一覧</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>メモツール</h1>
+            <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card mb-2">
+            <form method="get" class="filter-bar">
+                <div class="form-group">
+                    <input type="text" name="search" value="{{ search_term or '' }}" placeholder="キーワードで検索...">
+                </div>
+                <button type="submit" class="btn btn-primary">検索</button>
+                <a href="{{ url_for('memo.list_memos') }}" class="btn btn-secondary">リセット</a>
+            </form>
+        </div>
+
+        <div class="text-center mb-2">
+            <a href="{{ url_for('memo.new_memo') }}" class="btn btn-primary">新しいメモを作成</a>
+        </div>
+
+        <div class="memo-grid">
+            {% for memo in memos %}
+            <div class="card memo-card {% if memo.is_pinned %}pinned{% endif %}">
+                <div class="memo-card-header">
+                    <h2 class="item-title">{{ memo.title }}</h2>
+                    <form action="{{ url_for('memo.toggle_pin', id=memo.id) }}" method="post">
+                        <button type="submit" class="btn-pin {% if memo.is_pinned %}active{% endif %}">📌</button>
+                    </form>
+                </div>
+                <div class="memo-card-content">
+                    {{ memo.content_html | safe }}
+                </div>
+                <div class="memo-card-footer">
+                    <div class="tags">
+                        {% for tag in memo.tags.split(',') %}
+                            {% if tag.strip() %}
+                            <span class="tag-badge">{{ tag.strip() }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="list-item-actions">
+                        <a href="{{ url_for('memo.edit_memo', id=memo.id) }}" class="btn btn-secondary btn-sm">編集</a>
+                        <form action="{{ url_for('memo.delete_memo', id=memo.id) }}" method="post" onsubmit="return confirm('本当にこのメモを削除しますか？');">
+                            <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <p>登録されているメモはありません。</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

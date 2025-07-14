@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>アプリケーションポータル</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
+    <script src='[https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js](https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js)'></script>
 </head>
 <body>
     <div class="container">
@@ -35,16 +35,13 @@
                 <h2 class="color-research">企業研究ツール</h2>
                 <a href="{{ url_for('research.list_companies') }}" class="btn btn-research">アプリへ移動</a>
             </div>
-            
-            <!-- 【一時的にコメントアウト】メモツールへのリンクがエラーの原因になるため、無効化します -->
-            <!--
             <div class="card card-hover portal-card">
                 <h2 class="color-memo">メモツール</h2>
                 <p>講義ノートやアイデアなど、あらゆる情報を素早く記録します。</p>
-                <a href="#" class="btn btn-memo">アプリへ移動</a>
+                <a href="{{ url_for('memo.list_memos') }}" class="btn btn-memo">アプリへ移動</a>
             </div>
-            -->
         </div>
+    </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

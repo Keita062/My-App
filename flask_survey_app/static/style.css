@@ -68,6 +68,9 @@
   --color-research: #8b5cf6;      /* Violet 500 */
   --color-research-hover: #7c3aed;/* Violet 600 */
   /* ... */
+
+  --color-memo: #f97316;          /* Orange 500 */
+  --color-memo-hover: #ea580c;    /* Orange 600 */
 }
 
 /* ===============================================
@@ -444,4 +447,90 @@ hr {
 .event-interview {
     background-color: var(--color-research) !important;
     border-color: var(--color-research) !important;
+}
+
+/* (既存のボタンスタイルは省略) */
+.btn-memo { background-color: var(--color-memo); }
+.btn-memo:hover { background-color: var(--color-memo-hover); }
+
+/* (既存のポータルカードスタイルは省略) */
+.portal-card .color-memo { color: var(--color-memo); }
+
+/* --- 【新規】メモツール --- */
+.memo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-6);
+}
+.memo-card {
+    display: flex;
+    flex-direction: column;
+}
+.memo-card.pinned {
+    border: 2px solid var(--color-idea);
+}
+.memo-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+}
+.memo-card-header .item-title {
+    margin: 0;
+}
+.btn-pin {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 0;
+    opacity: 0.5;
+}
+.btn-pin.active {
+    opacity: 1;
+}
+.memo-card-content {
+    flex-grow: 1;
+    margin-top: var(--spacing-4);
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+    word-break: break-all;
+}
+.memo-card-footer {
+    margin-top: var(--spacing-4);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+}
+.tag-badge {
+    background-color: var(--color-bg-muted);
+    color: var(--color-text-muted);
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: 9999px;
+    font-size: 0.75rem;
+}
+.markdown-preview {
+    margin-top: var(--spacing-8);
+}
+.markdown-preview h2 {
+    margin-top: 0;
+}
+/* Markdownで生成されるテーブル用のスタイル */
+.markdown-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.markdown-preview th, .markdown-preview td {
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-2);
+}
+.markdown-preview th {
+    background-color: var(--color-bg-muted);
 }
