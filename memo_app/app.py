@@ -1,4 +1,3 @@
-# memo_app/app.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from sqlalchemy import or_
 import markdown2
