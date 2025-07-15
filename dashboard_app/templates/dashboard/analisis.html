@@ -1,0 +1,48 @@
+<!-- dashboard/analysis.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分析結果: {{ filename }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>分析結果: {{ filename }}</h1>
+            <a href="{{ url_for('dashboard.index') }}" class="link">&larr; 別のデータを分析する</a>
+        </div>
+
+        <!-- データプレビュー -->
+        <div class="card mb-2">
+            <h2>データプレビュー (先頭50行)</h2>
+            <div class="table-container">
+                {{ preview_html | safe }}
+            </div>
+        </div>
+
+        <!-- 基本統計量 -->
+        <div class="card mb-2">
+            <h2>基本統計量</h2>
+            <div class="table-container">
+                {{ stats_html | safe }}
+            </div>
+        </div>
+
+        <!-- 可視化グラフ -->
+        <div class="card mb-2">
+            <h2>データの可視化</h2>
+            <div class="plot-grid">
+                {% for plot_path in plot_paths %}
+                <div class="plot-item">
+                    <img src="{{ url_for('dashboard.static', filename=plot_path) }}" alt="Data Plot">
+                </div>
+                {% else %}
+                <p>表示できるグラフがありません。</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

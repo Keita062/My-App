@@ -71,6 +71,10 @@
 
   --color-memo: #f97316;          /* Orange 500 */
   --color-memo-hover: #ea580c;    /* Orange 600 */
+
+  /* ... */
+    --color-dashboard: #6366f1;      /* Indigo 500 */
+    --color-dashboard-hover: #4f46e5;/* Indigo 600 */
 }
 
 /* ===============================================
@@ -533,4 +537,54 @@ hr {
 }
 .markdown-preview th {
     background-color: var(--color-bg-muted);
+}
+/* (既存のボタンスタイルは省略) */
+.btn-dashboard { background-color: var(--color-dashboard); }
+.btn-dashboard:hover { background-color: var(--color-dashboard-hover); }
+
+/* (既存のポータルカードスタイルは省略) */
+.portal-card .color-dashboard { color: var(--color-dashboard); }
+
+/* --- 【新規】分析ダッシュボード --- */
+.upload-form .form-control-file {
+    display: block;
+    width: 100%;
+    padding: var(--spacing-3);
+    margin-bottom: var(--spacing-4);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--color-text-base);
+    background-color: var(--color-bg-surface);
+    background-clip: padding-box;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+}
+.table-container {
+    overflow-x: auto;
+}
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.data-table th, .data-table td {
+    padding: var(--spacing-3);
+    text-align: left;
+    border: 1px solid var(--color-border);
+}
+.data-table thead th {
+    background-color: var(--color-bg-muted);
+}
+.plot-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+}
+@media (min-width: 1024px) {
+    .plot-grid { grid-template-columns: 1fr 1fr; }
+}
+.plot-item img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-base);
 }
