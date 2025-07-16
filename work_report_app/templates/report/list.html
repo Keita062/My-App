@@ -20,66 +20,72 @@
             {% endif %}
         {% endwith %}
         <div class="text-center mb-2">
-            <a href="{{ url_for('report.select_type') }}" class="btn btn-primary">新規日報を作成</a>
+            <a href="{{ url_for('report.new_report') }}" class="btn btn-primary">新規日報を作成</a>
         </div>
         <div class="report-list-container">
             {% for report in reports %}
             <div class="report-day-entry">
                 <div class="report-day-header">
                     <h3>{{ report.report_date.strftime('%Y年%m月%d日') }}</h3>
-                    <form action="{{ url_for('report.delete_report', id=report.id) }}" method="post" onsubmit="return confirm('この日の報告をすべて削除しますか？');">
-                        <button type="submit" class="btn btn-danger btn-sm">削除</button>
-                    </form>
-                </div>
-            
-                <div class="card">
-                    <pre class="report-pre-formatted">
-【開始報告 {{ report.report_date.strftime('%m/%d') }}】
-============================
-■ 予定業務時間
-{{ report.start_scheduled_time | default('未記入') }}
-============================
-■ 予定業務内容
-{% for task in report.start_tasks %}
-・{{ task.desc }} ({{ task.duration }}分)
-{% else %}
-・未記入
-{% endfor %}
-============================
-■ 業務目標
-{% for line in report.start_goals.split('\n') if line.strip() %}
-・{{ line.strip() }}
-{% else %}
-・未記入
-{% endfor %}
-
-{% if report.end_completed_tasks %}
-【完了報告 {{ report.report_date.strftime('%m/%d') }}】
-============================
-■ 業務時間
-{{ report.end_actual_time | default('未記入') }}
-============================
-■ 実施業務内容
-{% for task in report.end_tasks %}
-・{{ task.desc }} ({{ task.duration }}分)
-{% else %}
-・未記入
-{% endfor %}
-============================
-■ 反省
-{% for line in report.end_reflection.split('\n') if line.strip() %}
-・{{ line.strip() }}
-{% else %}
-・未記入
-{% endfor %}
-{% endif %}
-                    </pre>
-                    {% if not report.end_completed_tasks %}
-                    <div class="report-not-filled">
-                        <p>完了報告が未記入です。</p>
-                        <a href="{{ url_for('report.new_end_report', id=report.id) }}" class="btn btn-success btn-sm">完了報告を記入</a>
+                    <div class="list-item-actions">
+                        <a href="{{ url_for('report.edit_report', id=report.id) }}" class="btn btn-secondary btn-sm">編集</a>
+                        <form action="{{ url_for('report.delete_report', id=report.id) }}" method="post" onsubmit="return confirm('この日の報告をすべて削除しますか？');">
+                            <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                        </form>
                     </div>
-                    {% endif %}
+                </div>
+                <div class="report-grid">
+                    <!-- 開始報告 -->
+                    <div class="card">
+                        <h4>【開始報告】</h4>
+                        <dl class="report-details">
+                            <dt>予定業務時間</dt>
+                            <dd>{{ report.start_scheduled_time or '====================' }}</dd>
+                            <hr class="report-divider">
+                            <dt>予定業務内容</dt>
+                            <dd>
+                                <ul class="report-task-list">
+                                    {% for task in report.start_tasks %}
+                                    <li>{{ task.desc }} ({{ task.duration }}分)</li>
+                                    {% else %}
+                                    <li>====================</li>
+                                    {% endfor %}
+                                </ul>
+                            </dd>
+                            <hr class="report-divider">
+                            <dt>業務目標</dt>
+                            <dd>{{ report.start_goals or '====================' }}</dd>
+                        </dl>
+                    </div>
+                    <!-- 完了報告 -->
+                    <div class="card">
+                        <h4>【完了報告】</h4>
+                        {% if report.end_completed_tasks %}
+                        <dl class="report-details">
+                            <dt>業務時間</dt>
+                            <dd>{{ report.end_actual_time or '====================' }}</dd>
+                            <hr class="report-divider">
+                            <dt>実施業務内容</dt>
+                            <dd>
+                                <ul class="report-task-list">
+                                    {% for task in report.end_tasks %}
+                                    <li>{{ task.desc }} ({{ task.duration }}分)</li>
+                                    {% else %}
+                                    <li>====================</li>
+                                    {% endfor %}
+                                </ul>
+                            </dd>
+                            <hr class="report-divider">
+                            <dt>反省</dt>
+                            <dd>{{ report.end_reflection or '====================' }}</dd>
+                        </dl>
+                        {% else %}
+                        <div class="report-not-filled">
+                            <p>未記入</p>
+                            <a href="{{ url_for('report.edit_report', id=report.id) }}" class="btn btn-success btn-sm">完了報告を記入</a>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {% else %}

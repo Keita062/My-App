@@ -3,90 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日報作成</title>
+    <title>日報作成・編集</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container form-container">
         <div class="page-header">
             <h1>
-                {% if form_type == 'start' %}
-                    開始報告の作成
+                {% if form_type == 'new' %}
+                    新規日報作成
                 {% else %}
-                    完了報告の作成 ({{ report.report_date.strftime('%Y-%m-%d') }})
+                    日報編集 ({{ report.report_date.strftime('%Y-%m-%d') }})
                 {% endif %}
             </h1>
-            <a href="{{ url_for('report.select_type') }}" class="link">&larr; 選択画面に戻る</a>
+            <a href="{{ url_for('report.list_reports') }}" class="link">&larr; 一覧に戻る</a>
         </div>
         <form method="post" class="card">
-            {% if form_type == 'start' %}
-                <!-- 開始報告フォーム -->
+            <!-- 開始報告セクション -->
+            <div class="form-section">
                 <h2>【開始報告】</h2>
                 <div class="form-group">
                     <label for="report_date">日付</label>
-                    <input type="date" id="report_date" name="report_date" required>
+                    <input type="date" id="report_date" name="report_date" value="{{ report.report_date.strftime('%Y-%m-%d') if report else '' }}" required {% if form_type == 'edit' %}readonly{% endif %}>
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>予定業務時間（開始）</label>
-                        <input type="time" name="start_time" required>
+                        <input type="time" name="start_time" value="{{ report.start_scheduled_time.split(' - ')[0] if report and report.start_scheduled_time else '' }}" required>
                     </div>
                      <div class="form-group">
                         <label>予定業務時間（終了）</label>
-                        <input type="time" name="end_time" required>
+                        <input type="time" name="end_time" value="{{ report.start_scheduled_time.split(' - ')[1] if report and report.start_scheduled_time else '' }}" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>予定業務内容</label>
-                    <div id="tasks-container">
-                        <!-- 初期入力欄 -->
+                    <div id="start-tasks-container">
+                        {% for task in start_tasks %}
                         <div class="task-entry">
-                            <input type="text" name="task_descriptions[]" placeholder="タスク内容" required>
-                            <input type="number" name="task_durations[]" placeholder="所要時間(分)" required>
+                            <input type="text" name="start_task_descriptions[]" placeholder="タスク内容" value="{{ task.desc }}" required>
+                            <input type="number" name="start_task_durations[]" placeholder="所要時間(分)" value="{{ task.duration }}" required>
                             <button type="button" class="btn btn-danger btn-sm btn-delete-task">削除</button>
                         </div>
+                        {% else %}
+                        <div class="task-entry">
+                            <input type="text" name="start_task_descriptions[]" placeholder="タスク内容" required>
+                            <input type="number" name="start_task_durations[]" placeholder="所要時間(分)" required>
+                            <button type="button" class="btn btn-danger btn-sm btn-delete-task">削除</button>
+                        </div>
+                        {% endfor %}
                     </div>
-                </div>
-                <div class="form-group">
-                     <button type="button" id="add-task-btn" class="btn btn-secondary btn-sm">タスクを追加</button>
+                    <button type="button" class="btn btn-secondary btn-sm add-task-btn" data-container="start-tasks-container" data-name-prefix="start_">タスクを追加</button>
                 </div>
                 <div class="form-group">
                     <label for="goals">業務目標</label>
-                    <textarea id="goals" name="goals" rows="3" required></textarea>
+                    <textarea id="goals" name="goals" rows="3" required>{{ report.start_goals or '' }}</textarea>
                 </div>
-            {% else %}
-                <!-- 完了報告フォーム -->
+            </div>
+
+            <hr>
+
+            <!-- 完了報告セクション -->
+            <div class="form-section">
                 <h2>【完了報告】</h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>実施業務時間（開始）</label>
-                        <input type="time" name="start_time" required>
+                        <input type="time" name="end_start_time" value="{{ report.end_actual_time.split(' - ')[0] if report and report.end_actual_time else '' }}">
                     </div>
                     <div class="form-group">
                         <label>実施業務時間（終了）</label>
-                        <input type="time" name="end_time" required>
+                        <input type="time" name="end_end_time" value="{{ report.end_actual_time.split(' - ')[1] if report and report.end_actual_time else '' }}">
                     </div>
                 </div>
                 <div class="form-group">
                     <label>実施業務内容</label>
-                    <div id="tasks-container">
+                    <div id="end-tasks-container">
+                        {% for task in end_tasks %}
                         <div class="task-entry">
-                            <input type="text" name="task_descriptions[]" placeholder="タスク内容" required>
-                            <input type="number" name="task_durations[]" placeholder="所要時間(分)" required>
-                             <button type="button" class="btn btn-danger btn-sm btn-delete-task">削除</button>
+                            <input type="text" name="end_task_descriptions[]" placeholder="タスク内容" value="{{ task.desc }}">
+                            <input type="number" name="end_task_durations[]" placeholder="所要時間(分)" value="{{ task.duration }}">
+                            <button type="button" class="btn btn-danger btn-sm btn-delete-task">削除</button>
                         </div>
+                        {% else %}
+                        <div class="task-entry">
+                            <input type="text" name="end_task_descriptions[]" placeholder="タスク内容">
+                            <input type="number" name="end_task_durations[]" placeholder="所要時間(分)">
+                            <button type="button" class="btn btn-danger btn-sm btn-delete-task">削除</button>
+                        </div>
+                        {% endfor %}
                     </div>
-                </div>
-                 <div class="form-group">
-                    <button type="button" id="add-task-btn" class="btn btn-secondary btn-sm">タスクを追加</button>
+                    <button type="button" class="btn btn-secondary btn-sm add-task-btn" data-container="end-tasks-container" data-name-prefix="end_">タスクを追加</button>
                 </div>
                 <div class="form-group">
                     <label for="reflection">反省・考察</label>
-                    <textarea id="reflection" name="reflection" rows="4" required></textarea>
+                    <textarea id="reflection" name="reflection" rows="4">{{ report.end_reflection or '' }}</textarea>
                 </div>
-            {% endif %}
+            </div>
+
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">登録する</button>
+                <button type="submit" class="btn btn-primary">{% if form_type == 'new' %}登録する{% else %}更新する{% endif %}</button>
             </div>
         </form>
     </div>

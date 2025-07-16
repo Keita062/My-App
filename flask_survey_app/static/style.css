@@ -340,8 +340,13 @@ hr {
 .report-task-list {
     list-style: disc;
     padding-left: 20px;
-    margin: 0;
+    margin-top: 0;
+    margin-bottom: 0;
 }
+.report-task-list li {
+    margin-bottom: var(--spacing-1); /* 各タスク間の少しの余白 */
+}
+
 /* 【新規】整形済みテキスト表示用のスタイル */
 .report-pre-formatted {
     white-space: pre-wrap;       /* 改行とスペースを維持し、自動で折り返す */
