@@ -342,6 +342,23 @@ hr {
     padding-left: 20px;
     margin: 0;
 }
+/* 【新規】整形済みテキスト表示用のスタイル */
+.report-pre-formatted {
+    white-space: pre-wrap;       /* 改行とスペースを維持し、自動で折り返す */
+    word-wrap: break-word;       /* 長い単語も折り返す */
+    font-family: inherit;        /* ページの基本フォントを使用 */
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--color-text-base);
+    background-color: var(--color-bg-muted);
+    padding: var(--spacing-4);
+    border-radius: var(--border-radius-sm);
+}
+.report-not-filled {
+    text-align: center;
+    padding-top: var(--spacing-4);
+}
+
 
 .task-entry {
     display: grid;
