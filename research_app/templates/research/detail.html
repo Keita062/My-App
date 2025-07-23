@@ -15,7 +15,6 @@
 
         <div class="detail-grid">
             <div class="detail-main-content">
-                <!-- 企業分析メモ -->
                 <div class="card">
                     <h2>企業分析メモ</h2>
                     <dl class="detail-list">
@@ -26,17 +25,62 @@
                         <dt>フリーメモ</dt><dd>{{ company.free_memo or '未記入' }}</dd>
                     </dl>
                 </div>
-                <!-- 選考イベント記録 -->
+
                 <div class="card">
                     <h2>選考イベント記録</h2>
-                     <dl class="detail-list">
-                        <dt>説明会・イベントメモ</dt><dd>{{ company.event_memo or '未記入' }}</dd>
-                        <dt>面接の記録</dt><dd>{{ company.interview_memo or '未記入' }}</dd>
-                    </dl>
+                    
+                    <form method="post" action="{{ url_for('research.add_event', company_id=company.id) }}" class="event-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="event_date">日付</label>
+                                <input type="date" id="event_date" name="event_date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="event_type">イベント種別</label>
+                                <select id="event_type" name="event_type">
+                                    <option value="説明会">説明会</option>
+                                    <option value="カジュアル面談">カジュアル面談</option>
+                                    <option value="ES提出">ES提出</option>
+                                    <option value="Webテスト">Webテスト</option>
+                                    <option value="1次面接">1次面接</option>
+                                    <option value="2次面接">2次面接</option>
+                                    <option value="最終面接">最終面接</option>
+                                    <option value="内定">内定</option>
+                                    <option value="その他">その他</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="memo">メモ</label>
+                            <textarea id="memo" name="memo" rows="3" placeholder="面接官の名前、聞かれたこと、感想など..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-secondary">イベントを記録する</button>
+                        </div>
+                    </form>
+                    <hr>
+
+                    <div class="event-list">
+                        {% if company.events %}
+                            {% for event in company.events | sort(attribute='event_date', reverse=True) %}
+                            <div class="event-item">
+                                <div class="event-header">
+                                    <span class="event-date">{{ event.event_date.strftime('%Y年%m月%d日') }}</span>
+                                    <strong class="event-type">{{ event.event_type }}</strong>
+                                </div>
+                                <div class="event-memo">
+                                    <p>{{ event.memo | nl2br }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>まだ記録されたイベントはありません。</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
+
             <div class="detail-sidebar">
-                <!-- 基本情報 -->
                 <div class="card">
                     <h2>基本情報</h2>
                     <dl class="detail-list">
@@ -45,7 +89,7 @@
                         <dt>採用サイト</dt><dd><a href="{{ company.recruit_url }}" target="_blank" class="link">{{ company.recruit_url }}</a></dd>
                     </dl>
                 </div>
-                <!-- 就活管理 -->
+
                 <div class="card">
                     <h2>就活管理</h2>
                     <dl class="detail-list">
@@ -53,17 +97,17 @@
                         <dt>志望度</dt><dd>{{ company.interest_level }}</dd>
                         <dt>応募職種</dt><dd>{{ company.applied_position or '未設定' }}</dd>
                         <dt>ES締切</dt><dd>{{ company.es_deadline.strftime('%Y年%m月%d日') if company.es_deadline else '未設定' }}</dd>
-                        <dt>面接日</dt><dd>{{ company.interview_date.strftime('%Y年%m月%d日') if company.interview_date else '未設定' }}</dd>
-                    </dl>
+                        </dl>
                 </div>
-                 <!-- マイページ情報 -->
-                <div class="card">
+
+                 <div class="card">
                     <h2>マイページ情報</h2>
                     <dl class="detail-list">
                         <dt>ID/Email</dt><dd>{{ company.mypage_id or '未設定' }}</dd>
                         <dt>パスワード</dt><dd>{{ company.mypage_password or '未設定' }}</dd>
                     </dl>
                 </div>
+
                 <div class="page-actions">
                     <a href="{{ url_for('research.edit_company', id=company.id) }}" class="btn btn-primary">編集する</a>
                 </div>

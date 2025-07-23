@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from datetime import datetime
 from sqlalchemy import or_
 from flask_survey_app.extensions import db
-from .models import Company
+from .models import Company, SelectionEvent
 
 research_bp = Blueprint(
     'research', 
@@ -81,9 +81,6 @@ def new_company():
             culture=request.form['culture'],
             recent_news=request.form['recent_news'],
             free_memo=request.form['free_memo'],
-            event_memo=request.form['event_memo'],
-            interview_memo=request.form['interview_memo'],
-            interview_date=interview_date,
             es_deadline=es_deadline,
             mypage_id=request.form['mypage_id'],
             mypage_password=request.form['mypage_password']
@@ -114,9 +111,6 @@ def edit_company(id):
         company.culture = request.form['culture']
         company.recent_news = request.form['recent_news']
         company.free_memo = request.form['free_memo']
-        company.event_memo = request.form['event_memo']
-        company.interview_memo = request.form['interview_memo']
-        company.interview_date = datetime.strptime(request.form['interview_date'], '%Y-%m-%d').date() if request.form['interview_date'] else None
         company.es_deadline = datetime.strptime(request.form['es_deadline'], '%Y-%m-%d').date() if request.form['es_deadline'] else None
         company.mypage_id = request.form['mypage_id']
         company.mypage_password = request.form['mypage_password']
@@ -125,6 +119,25 @@ def edit_company(id):
         return redirect(url_for('research.detail_company', id=id))
         
     return render_template('research/form.html', company=company)
+
+@research_bp.route('/event/add/<int:company_id>', methods=['POST'])
+def add_event(company_id):
+    """選考イベントを新規追加"""
+    company = Company.query.get_or_404(company_id)
+    
+    event_date_str = request.form.get('event_date')
+    event_date = datetime.strptime(event_date_str, '%Y-%m-%d').date() if event_date_str else datetime.utcnow().date()
+
+    new_event = SelectionEvent(
+        event_date=event_date,
+        event_type=request.form.get('event_type'),
+        memo=request.form.get('memo'),
+        company_id=company.id
+    )
+    db.session.add(new_event)
+    db.session.commit()
+    
+    return redirect(url_for('research.detail_company', id=company_id))
 
 @research_bp.route('/delete/<int:id>', methods=['POST'])
 def delete_company(id):

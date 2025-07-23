@@ -29,11 +29,9 @@ class Company(db.Model):
     recent_news = db.Column(db.Text)
     free_memo = db.Column(db.Text)
     
-    # D. 選考イベント記録
-    event_memo = db.Column(db.Text)
-    interview_memo = db.Column(db.Text)
-    interview_date = db.Column(db.Date, nullable=True) # カレンダー連携用
-    es_deadline = db.Column(db.Date, nullable=True) # カレンダー連携用
+    # D. 選考イベント記録 (新しい関連付け)
+    events = db.relationship('SelectionEvent', backref='company', lazy=True, cascade="all, delete-orphan")
+    es_deadline = db.Column(db.Date, nullable=True) # ES締切は個別のイベントではないため残す
 
     # E. マイページ情報
     mypage_id = db.Column(db.String(100))
@@ -42,3 +40,21 @@ class Company(db.Model):
 
     def __repr__(self):
         return f'<Company {self.company_name}>'
+
+# 【新規追加】選考イベントモデル
+class SelectionEvent(db.Model):
+    """
+    個別の選考イベントを記録するためのモデル
+    """
+    __bind_key__ = 'research'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    event_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    event_type = db.Column(db.String(100), nullable=False) # 例: 説明会, 1次面接
+    memo = db.Column(db.Text)
+    
+    # Companyモデルとの連携
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<SelectionEvent {self.event_type} for {self.company.company_name}>'
