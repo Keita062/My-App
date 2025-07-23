@@ -1,19 +1,36 @@
 # データベースファイル
-# survey.db と log.db の両方を無視します
 *.db
 
-# Pythonのキャッシュファイル
+# ログファイル
+*.log
+
+# CSVファイル (データとして管理しない場合)
+*.csv
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-# IDE/エディタの設定ファイル
-.vscode/
-.idea/
-
-# 仮想環境フォルダ (もし使用している場合)
+# 仮想環境
 venv/
 .venv/
 env/
 .env
+
+# IDE/エディタ設定
+.vscode/
+.idea/
+
+# OS固有のファイル
+.DS_Store
+Thumbs.db
+
+# アップロードされたファイルを保存するフォルダ
+uploads/
+
+# 生成されたプロット画像を保存するフォルダ
+/dashboard_app/static/plots/
 
 .csv
