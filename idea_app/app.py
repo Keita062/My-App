@@ -12,14 +12,25 @@ idea_bp = Blueprint(
 @idea_bp.route('/')
 def list_ideas():
     """アイディアの一覧を表示"""
-    # フィルタリング機能のためのクエリパラメータを取得
+    # ユーザーがステータスフィルターを明示的に指定したかを確認
+    has_status_filter = 'status' in request.args
+    
+    # クエリパラメータを取得（指定がない場合は空文字''）
     status_filter = request.args.get('status', '')
     category_filter = request.args.get('category', '')
 
     query = Idea.query
 
-    if status_filter:
+    # --- 【改修点】デフォルト表示のロジック ---
+    # フィルターの指定がない場合 (デフォルト表示) は、「完了」ステータスを除外する
+    if not has_status_filter:
+        query = query.filter(Idea.status != '完了')
+    # フィルターが指定されていて、かつ空文字でない（「すべて」でない）場合、そのステータスで絞り込む
+    elif status_filter:
         query = query.filter(Idea.status == status_filter)
+    # status_filterが空文字''の場合（「すべて」が選択された場合）は、ステータスによる絞り込みは行わない
+
+   
     if category_filter:
         query = query.filter(Idea.category == category_filter)
 
@@ -27,6 +38,7 @@ def list_ideas():
     categories = [c[0] for c in db.session.query(Idea.category).distinct().all() if c[0]]
 
     all_ideas = query.order_by(Idea.creation_date.desc()).all()
+    
     return render_template('idea/list.html', 
                            ideas=all_ideas, 
                            categories=categories,
