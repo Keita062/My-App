@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>選考イベントの編集</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container form-container">
+        <div class="page-header">
+            <h1>選考イベントの編集</h1>
+            <a href="{{ url_for('research.detail_company', id=event.company_id) }}" class="link">&larr; 企業詳細に戻る</a>
+        </div>
+        <form method="post" class="card">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="event_date">日付</label>
+                    <input type="date" id="event_date" name="event_date" value="{{ event.event_date.strftime('%Y-%m-%d') }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="event_type">イベント種別</label>
+                    <select id="event_type" name="event_type" required>
+                        <option value="説明会" {% if event.event_type == '説明会' %}selected{% endif %}>説明会</option>
+                        <option value="カジュアル面談" {% if event.event_type == 'カジュアル面談' %}selected{% endif %}>カジュアル面談</option>
+                        <option value="ES提出" {% if event.event_type == 'ES提出' %}selected{% endif %}>ES提出</option>
+                        <option value="Webテスト" {% if event.event_type == 'Webテスト' %}selected{% endif %}>Webテスト</option>
+                        <option value="1次面接" {% if event.event_type == '1次面接' %}selected{% endif %}>1次面接</option>
+                        <option value="2次面接" {% if event.event_type == '2次面接' %}selected{% endif %}>2次面接</option>
+                        <option value="最終面接" {% if event.event_type == '最終面接' %}selected{% endif %}>最終面接</option>
+                        <option value="内定" {% if event.event_type == '内定' %}selected{% endif %}>内定</option>
+                        <option value="その他" {% if event.event_type == 'その他' %}selected{% endif %}>その他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="memo">メモ</label>
+                <textarea id="memo" name="memo" rows="5" placeholder="面接官の名前、聞かれたこと、感想など...">{{ event.memo or '' }}</textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">更新する</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

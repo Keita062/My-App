@@ -12,17 +12,25 @@
             <h1>{{ company.company_name }}</h1>
             <a href="{{ url_for('research.list_companies') }}" class="link">&larr; 一覧に戻る</a>
         </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
         <div class="detail-grid">
             <div class="detail-main-content">
                 <div class="card">
                     <h2>企業分析メモ</h2>
                     <dl class="detail-list">
-                        <dt>強み・特徴</dt><dd>{{ company.strength_features or '未記入' }}</dd>
-                        <dt>弱み・課題</dt><dd>{{ company.weakness_issues or '未記入' }}</dd>
-                        <dt>社風・文化</dt><dd>{{ company.culture or '未記入' }}</dd>
-                        <dt>最近のニュース</dt><dd>{{ company.recent_news or '未記入' }}</dd>
-                        <dt>フリーメモ</dt><dd>{{ company.free_memo or '未記入' }}</dd>
+                        <dt>強み・特徴</dt><dd class="report-pre-formatted">{{ company.strength_features or '未記入' }}</dd>
+                        <dt>弱み・課題</dt><dd class="report-pre-formatted">{{ company.weakness_issues or '未記入' }}</dd>
+                        <dt>社風・文化</dt><dd class="report-pre-formatted">{{ company.culture or '未記入' }}</dd>
+                        <dt>最近のニュース</dt><dd class="report-pre-formatted">{{ company.recent_news or '未記入' }}</dd>
+                        <dt>フリーメモ</dt><dd class="report-pre-formatted">{{ company.free_memo or '未記入' }}</dd>
                     </dl>
                 </div>
 
@@ -54,7 +62,7 @@
                             <label for="memo">メモ</label>
                             <textarea id="memo" name="memo" rows="3" placeholder="面接官の名前、聞かれたこと、感想など..."></textarea>
                         </div>
-                        <div class="form-actions">
+                        <div class="form-actions" style="justify-content: flex-start;">
                             <button type="submit" class="btn btn-secondary">イベントを記録する</button>
                         </div>
                     </form>
@@ -63,13 +71,21 @@
                     <div class="event-list">
                         {% if company.events %}
                             {% for event in company.events | sort(attribute='event_date', reverse=True) %}
-                            <div class="event-item">
-                                <div class="event-header">
-                                    <span class="event-date">{{ event.event_date.strftime('%Y年%m月%d日') }}</span>
-                                    <strong class="event-type">{{ event.event_type }}</strong>
+                            <div class="event-item" style="border-bottom: 1px solid var(--color-border); padding-bottom: 1rem; margin-bottom: 1rem;">
+                                <div class="event-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <div>
+                                        <span class="event-date" style="color: var(--color-text-muted); font-size: 0.875rem; margin-right: 1rem;">{{ event.event_date.strftime('%Y年%m月%d日') }}</span>
+                                        <strong class="event-type">{{ event.event_type }}</strong>
+                                    </div>
+                                    <div class="list-item-actions">
+                                        <a href="{{ url_for('research.edit_event', event_id=event.id) }}" class="btn btn-secondary btn-sm">編集</a>
+                                        <form action="{{ url_for('research.delete_event', event_id=event.id) }}" method="post" onsubmit="return confirm('このイベントを削除しますか？');" style="display: inline;">
+                                            <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                                        </form>
+                                    </div>
                                 </div>
                                 <div class="event-memo">
-                                    <p>{{ event.memo | nl2br }}</p>
+                                    <p class="report-pre-formatted" style="margin: 0;">{{ event.memo or '(メモなし)' }}</p>
                                 </div>
                             </div>
                             {% endfor %}
@@ -109,7 +125,7 @@
                 </div>
 
                 <div class="page-actions">
-                    <a href="{{ url_for('research.edit_company', id=company.id) }}" class="btn btn-primary">編集する</a>
+                    <a href="{{ url_for('research.edit_company', id=company.id) }}" class="btn btn-primary">企業情報を編集する</a>
                 </div>
             </div>
         </div>

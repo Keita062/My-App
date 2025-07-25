@@ -12,6 +12,14 @@
             <h1>企業研究一覧</h1>
             <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
         </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
         <div class="card mb-2">
             <form method="get" class="filter-bar-grid">
@@ -54,22 +62,32 @@
             </form>
         </div>
 
-        <div class="text-center mb-2">
+        <div class="page-actions">
             <a href="{{ url_for('research.new_company') }}" class="btn btn-primary">新規企業を登録</a>
         </div>
 
         <div class="research-grid">
             {% for company in companies %}
-            <a href="{{ url_for('research.detail_company', id=company.id) }}" class="card card-link">
-                <div class="research-card-header">
-                    <h2 class="item-title">{{ company.company_name }}</h2>
-                    <span class="priority-tag priority-{{ company.interest_level|lower }}">{{ company.interest_level }}</span>
+            <div class="card">
+                <a href="{{ url_for('research.detail_company', id=company.id) }}" class="card-link" style="text-decoration: none; color: inherit;">
+                    <div class="research-card-header">
+                        <h2 class="item-title" style="margin-bottom: 0.5rem;">{{ company.company_name }}</h2>
+                        <span class="priority-tag priority-{{ company.interest_level|lower }}">{{ company.interest_level }}</span>
+                    </div>
+                    <p class="item-details" style="margin: 0.5rem 0;">{{ company.industry or '業界未設定' }}</p>
+                    <p class="status-badge">{{ company.selection_status }}</p>
+                </a>
+                <div class="list-item-actions" style="margin-top: 1rem; border-top: 1px solid var(--color-border); padding-top: 1rem; display: flex; gap: 0.5rem;">
+                    <a href="{{ url_for('research.edit_company', id=company.id) }}" class="btn btn-secondary btn-sm">編集</a>
+                    <form action="{{ url_for('research.delete_company', id=company.id) }}" method="post" onsubmit="return confirm('「{{ company.company_name }}」を削除しますか？\n関連する選考イベントもすべて削除されます。');" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                    </form>
                 </div>
-                <p class="item-details">{{ company.industry }}</p>
-                <p class="status-badge">{{ company.selection_status }}</p>
-            </a>
+            </div>
             {% else %}
-            <p>登録されている企業はありません。</p>
+            <div class="card text-center">
+                <p>登録されている企業はありません。</p>
+            </div>
             {% endfor %}
         </div>
     </div>

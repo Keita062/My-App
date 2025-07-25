@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from datetime import datetime
 from sqlalchemy import or_
 from flask_survey_app.extensions import db
@@ -63,7 +63,6 @@ def new_company():
     """新規企業登録"""
     if request.method == 'POST':
         # 日付フィールドの変換
-        interview_date = datetime.strptime(request.form['interview_date'], '%Y-%m-%d').date() if request.form['interview_date'] else None
         es_deadline = datetime.strptime(request.form['es_deadline'], '%Y-%m-%d').date() if request.form['es_deadline'] else None
 
         new_company = Company(
@@ -87,6 +86,7 @@ def new_company():
         )
         db.session.add(new_company)
         db.session.commit()
+        flash('新しい企業を登録しました。', 'success')
         return redirect(url_for('research.list_companies'))
     
     return render_template('research/form.html', company=None)
@@ -96,7 +96,6 @@ def edit_company(id):
     """企業情報編集"""
     company = Company.query.get_or_404(id)
     if request.method == 'POST':
-        # (各フィールドの更新処理)
         company.company_name = request.form['company_name']
         company.industry = request.form['industry']
         company.website_url = request.form['website_url']
@@ -116,9 +115,19 @@ def edit_company(id):
         company.mypage_password = request.form['mypage_password']
         
         db.session.commit()
+        flash('企業情報を更新しました。', 'success')
         return redirect(url_for('research.detail_company', id=id))
         
     return render_template('research/form.html', company=company)
+
+@research_bp.route('/delete/<int:id>', methods=['POST'])
+def delete_company(id):
+    """企業情報削除"""
+    company = Company.query.get_or_404(id)
+    db.session.delete(company)
+    db.session.commit()
+    flash(f'「{company.company_name}」の情報を削除しました。', 'success')
+    return redirect(url_for('research.list_companies'))
 
 @research_bp.route('/event/add/<int:company_id>', methods=['POST'])
 def add_event(company_id):
@@ -136,13 +145,29 @@ def add_event(company_id):
     )
     db.session.add(new_event)
     db.session.commit()
-    
+    flash('新しい選考イベントを記録しました。', 'success')
     return redirect(url_for('research.detail_company', id=company_id))
 
-@research_bp.route('/delete/<int:id>', methods=['POST'])
-def delete_company(id):
-    """企業情報削除"""
-    company = Company.query.get_or_404(id)
-    db.session.delete(company)
+@research_bp.route('/event/edit/<int:event_id>', methods=['GET', 'POST'])
+def edit_event(event_id):
+    """選考イベントを編集"""
+    event = SelectionEvent.query.get_or_404(event_id)
+    if request.method == 'POST':
+        event.event_date = datetime.strptime(request.form['event_date'], '%Y-%m-%d').date()
+        event.event_type = request.form['event_type']
+        event.memo = request.form['memo']
+        db.session.commit()
+        flash('選考イベントを更新しました。', 'success')
+        return redirect(url_for('research.detail_company', id=event.company_id))
+    
+    return render_template('research/event_form.html', event=event)
+
+@research_bp.route('/event/delete/<int:event_id>', methods=['POST'])
+def delete_event(event_id):
+    """選考イベントを削除"""
+    event = SelectionEvent.query.get_or_404(event_id)
+    company_id = event.company_id
+    db.session.delete(event)
     db.session.commit()
-    return redirect(url_for('research.list_companies'))
+    flash('選考イベントを削除しました。', 'success')
+    return redirect(url_for('research.detail_company', id=company_id))
