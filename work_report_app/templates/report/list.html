@@ -9,8 +9,8 @@
 <body>
     <div class="container report-container">
         <div class="page-header">
+            <a href="{{ url_for('index') }}" class="link">&larr; ポータルに戻る</a>
             <h1>REHATCH日報一覧</h1>
-            <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
         </div>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -21,7 +21,7 @@
             {% endif %}
         {% endwith %}
         
-        <div class="page-actions">
+        <div class="page-actions" style="margin-bottom: var(--spacing-8);">
             <a href="{{ url_for('report.new_report') }}" class="btn btn-primary">新規開始報告を作成</a>
         </div>
         

@@ -11,7 +11,15 @@
     <div class="container">
         <h1>Application Portal</h1>
         
-        <div class="card mb-2">
+        <div class="toggle-switch-container">
+            <label for="calendar-toggle">カレンダーを表示</label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="calendar-toggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="card mb-2" id="calendar-wrapper">
             <div id='calendar'></div>
         </div>
 
@@ -67,6 +75,7 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // カレンダーの初期化
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
@@ -84,6 +93,25 @@
                 }
             });
             calendar.render();
+
+            // カレンダー表示/非表示トグルの処理
+            const toggle = document.getElementById('calendar-toggle');
+            const calendarWrapper = document.getElementById('calendar-wrapper');
+            
+            // ローカルストレージから表示状態を読み込む
+            const isCalendarVisible = localStorage.getItem('calendarVisible') !== 'false';
+            toggle.checked = isCalendarVisible;
+            calendarWrapper.style.display = isCalendarVisible ? 'block' : 'none';
+
+            toggle.addEventListener('change', function() {
+                if (this.checked) {
+                    calendarWrapper.style.display = 'block';
+                    localStorage.setItem('calendarVisible', 'true');
+                } else {
+                    calendarWrapper.style.display = 'none';
+                    localStorage.setItem('calendarVisible', 'false');
+                }
+            });
         });
     </script>
 </body>

@@ -1,5 +1,6 @@
 # main_app.py
 import os
+import json
 from flask import Flask, render_template, request, jsonify, url_for
 from datetime import datetime
 
@@ -87,6 +88,17 @@ def create_app():
     # --- 拡張機能の初期化 ---
     db.init_app(app)
 
+    # --- カスタムJinjaフィルター ---
+    @app.template_filter('fromjson')
+    def fromjson_filter(value):
+        if not isinstance(value, str):
+            return []
+        try:
+            return json.loads(value)
+        except (json.JSONDecodeError, TypeError):
+            # パースに失敗した場合は空のリストを返す
+            return []
+
     # --- Blueprintの登録 ---
     app.register_blueprint(survey_bp, url_prefix='/survey') 
     app.register_blueprint(report_bp, url_prefix='/report')
@@ -109,9 +121,34 @@ def create_app():
         """カレンダー用のイベントデータをJSONで返すAPI"""
         events = []
         
-        # (既存のイベント取得ロジックは省略)
+        # 1. アイディアフォームのイベント
+        ideas = Idea.query.all()
+        for idea in ideas:
+            events.append({'title': f"【ｱｲﾃﾞｨｱ】{idea.title}", 'start': idea.creation_date.isoformat(), 'url': url_for('idea.edit_idea', id=idea.id), 'className': 'event-idea'})
+            if idea.due_date:
+                events.append({'title': f"【目標】{idea.title}", 'start': idea.due_date.isoformat(), 'url': url_for('idea.edit_idea', id=idea.id), 'className': 'event-idea-due'})
 
-        # ToDoリストの期日
+        # 2. ES記入フォームの締切
+        surveys = Survey.query.all()
+        for survey in surveys:
+            if survey.deadline:
+                events.append({'title': f"【ES締切】{survey.company_name}", 'start': survey.deadline.isoformat(), 'url': url_for('survey.detail_survey', id=survey.id), 'className': 'event-survey'})
+        
+        # 3. 日報
+        reports = Report.query.all()
+        for report in reports:
+            events.append({'title': "【日報】提出済", 'start': report.report_date.isoformat(), 'url': url_for('report.list_reports'), 'className': 'event-report'})
+            
+        # 4. 企業研究
+        companies = Company.query.all()
+        for company in companies:
+            if company.es_deadline:
+                events.append({'title': f"【ES締切】{company.company_name}", 'start': company.es_deadline.isoformat(), 'url': url_for('research.detail_company', id=company.id), 'className': 'event-survey'})
+            for event in company.events:
+                if '面接' in event.event_type:
+                    events.append({'title': f"【面接】{company.company_name}", 'start': event.event_date.isoformat(), 'url': url_for('research.detail_company', id=company.id), 'className': 'event-interview'})
+
+        # 5. ToDoリストの期日
         tasks = Todo.query.filter(Todo.due_date.isnot(None)).all()
         for task in tasks:
             events.append({
