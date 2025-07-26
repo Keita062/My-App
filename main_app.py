@@ -8,10 +8,9 @@ from datetime import datetime
 from flask_survey_app.extensions import db
 
 # アプリケーション1: ES記入フォーム
-# 【修正】Surveyモデルをapp.pyからインポート
 from flask_survey_app.app import survey_bp, Survey 
 
-# アプリケーション2: インターンシップ日報
+# アプリケーション2: REHATCH日報
 from work_report_app.app import report_bp 
 from work_report_app.models import Report
 
@@ -25,7 +24,7 @@ from payroll_app import models as payroll_models
 
 # アプリケーション5: 企業研究ツール
 from research_app.app import research_bp
-from research_app.models import Company
+from research_app.models import Company, SelectionEvent
 
 # アプリケーション6: メモツール
 from memo_app.app import memo_bp
@@ -33,6 +32,10 @@ from memo_app.models import Memo
 
 # アプリケーション7: 分析ダッシュボード
 from dashboard_app.app import dashboard_bp
+
+# 【新規追加】アプリケーション8: ToDoリスト
+from todo_app.app import todo_bp
+from todo_app.models import Todo
 
 # 共通機能: ログ
 from flask_survey_app.log_utils import Log
@@ -60,6 +63,9 @@ def create_app():
     payroll_app_dir = os.path.join(basedir, 'payroll_app')
     research_app_dir = os.path.join(basedir, 'research_app')
     memo_app_dir = os.path.join(basedir, 'memo_app')
+    # 【新規追加】
+    todo_app_dir = os.path.join(basedir, 'todo_app')
+
 
     # --- データベース設定 ---
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(survey_app_dir, 'survey.db')
@@ -69,7 +75,9 @@ def create_app():
         'idea': 'sqlite:///' + os.path.join(idea_app_dir, 'idea.db'),
         'payroll': 'sqlite:///' + os.path.join(payroll_app_dir, 'payroll.db'),
         'research': 'sqlite:///' + os.path.join(research_app_dir, 'research.db'),
-        'memo': 'sqlite:///' + os.path.join(memo_app_dir, 'memo.db')
+        'memo': 'sqlite:///' + os.path.join(memo_app_dir, 'memo.db'),
+        # 【新規追加】
+        'todo': 'sqlite:///' + os.path.join(todo_app_dir, 'todo.db')
     }
     
     # --- 拡張機能の初期化 ---
@@ -83,6 +91,8 @@ def create_app():
     app.register_blueprint(research_bp, url_prefix='/research')
     app.register_blueprint(memo_bp, url_prefix='/memo')
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
+    # 【新規追加】
+    app.register_blueprint(todo_bp, url_prefix='/todo')
     
     # --- ルート定義 ---
     @app.route('/')
@@ -118,8 +128,22 @@ def create_app():
         for company in companies:
             if company.es_deadline:
                 events.append({'title': f"【ES締切】{company.company_name}", 'start': company.es_deadline.isoformat(), 'url': url_for('research.detail_company', id=company.id), 'className': 'event-survey'})
-            if company.interview_date:
-                events.append({'title': f"【面接】{company.company_name}", 'start': company.interview_date.isoformat(), 'url': url_for('research.detail_company', id=company.id), 'className': 'event-interview'})
+            # 【修正】古いinterview_dateをSelectionEventから取得するように変更（または削除）
+            # ここでは簡単のため、個別のイベントをカレンダーに表示するロジックは一旦省略します。
+            # for event in company.events:
+            #     if '面接' in event.event_type:
+            #         events.append({'title': f"【面接】{company.company_name}", 'start': event.event_date.isoformat(), 'url': url_for('research.detail_company', id=company.id), 'className': 'event-interview'})
+
+        # 5. 【新規追加】ToDoリストの期日
+        tasks = Todo.query.filter(Todo.due_date.isnot(None)).all()
+        for task in tasks:
+            events.append({
+                'title': f"【ToDo】{task.content}",
+                'start': task.due_date.isoformat(),
+                'url': url_for('todo.list_tasks'),
+                'className': 'event-todo' # style.cssで別途定義が必要
+            })
+
 
         return jsonify(events)
 

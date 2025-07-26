@@ -3,76 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アプリケーションポータル</title>
+    <title>Application Portal</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src='[https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js](https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js)'></script>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css' rel='stylesheet' />
 </head>
 <body>
     <div class="container">
-        <h1>アプリケーションポータル</h1>
+        <h1>Application Portal</h1>
+        
         <div class="card mb-2">
-            <div id="calendar"></div>
+            <div id='calendar'></div>
         </div>
+
         <div class="portal-grid">
-            <div class="card card-hover portal-card">
+            <!-- ES記入フォーム -->
+            <a href="{{ url_for('survey.list_surveys') }}" class="card card-link card-hover">
                 <h2 class="color-survey">ES記入フォーム</h2>
-                <p>企業のESを記入するフォームである。</p>
-                <a href="{{ url_for('survey.list_surveys') }}" class="btn btn-primary">アプリへ移動</a>
-            </div>
-            <div class="card card-hover portal-card">
-                <h2 class="color-report">インターンシップ日報</h2>
-                <p>インターンシップ日報を一覧する日報である。<p>
-                <a href="{{ url_for('report.list_reports') }}" class="btn btn-success">アプリへ移動</a>
-            </div>
-            <div class="card card-hover portal-card">
-                <h2 class="color-idea">アイディアフォーム</h2>
-                <p>アイディアフォームを一覧するページである。</p>
-                <a href="{{ url_for('idea.list_ideas') }}" class="btn btn-idea">アプリへ移動</a>
-            </div>
-            <div class="card card-hover portal-card">
-                <h2 class="color-payroll">給与計算アプリ</h2>
-                <p>給与計算アプリは給与に関することを一覧で確認するページである。</p>
-                <a href="{{ url_for('payroll.dashboard') }}" class="btn btn-payroll">アプリへ移動</a>
-            </div>
-            <div class="card card-hover portal-card">
+                <p>ESの質問と回答を管理します。</p>
+            </a>
+            <!-- REHATCH日報 -->
+            <a href="{{ url_for('report.list_reports') }}" class="card card-link card-hover">
+                <h2 class="color-report">REHATCH日報</h2>
+                <p>日々の業務報告を作成・管理します。</p>
+            </a>
+            <!-- アイディア -->
+            <a href="{{ url_for('idea.list_ideas') }}" class="card card-link card-hover">
+                <h2 class="color-idea">アイディア帳</h2>
+                <p>思いついたアイディアを記録・管理します。</p>
+            </a>
+            <!-- 給与計算 -->
+            <a href="{{ url_for('payroll.dashboard') }}" class="card card-link card-hover">
+                <h2 class="color-payroll">給与計算</h2>
+                <p>勤務記録から給与を自動計算します。</p>
+            </a>
+            <!-- 企業研究 -->
+            <a href="{{ url_for('research.list_companies') }}" class="card card-link card-hover">
                 <h2 class="color-research">企業研究ツール</h2>
-                <p>企業研究ツールは企業の情報を一覧で確認するページである。</p>
-                <a href="{{ url_for('research.list_companies') }}" class="btn btn-research">アプリへ移動</a>
-            </div>
-            <div class="card card-hover portal-card">
+                <p>企業情報や選考状況を一元管理します。</p>
+            </a>
+            <!-- メモツール -->
+            <a href="{{ url_for('memo.list_memos') }}" class="card card-link card-hover">
                 <h2 class="color-memo">メモツール</h2>
-                <p>講義ノートやアイデアなど、あらゆる情報を素早く記録します。</p>
-                <a href="{{ url_for('memo.list_memos') }}" class="btn btn-memo">アプリへ移動</a>
-            </div>
-            <div class="card card-hover portal-card">
+                <p>Markdown対応のメモを管理します。</p>
+            </a>
+            <!-- 分析ダッシュボード -->
+            <a href="{{ url_for('dashboard.index') }}" class="card card-link card-hover">
                 <h2 class="color-dashboard">分析ダッシュボード</h2>
-                <p>CSVやExcelをアップロードして、データの可視化と分析を行います。</p>
-                <a href="{{ url_for('dashboard.index') }}" class="btn btn-dashboard">アプリへ移動</a>
-            </div>
+                <p>CSVデータをアップロードして可視化・分析します。</p>
+            </a>
+            <!-- 【新規追加】ToDoリスト -->
+            <a href="{{ url_for('todo.list_tasks') }}" class="card card-link card-hover">
+                <h2 class="color-todo">ToDoリスト</h2>
+                <p>日々のタスクを管理します。</p>
+            </a>
         </div>
     </div>
-    </div>
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const calendarEl = document.getElementById('calendar');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                locale: 'ja', 
+                events: '/api/events',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek'
+                    right: 'dayGridMonth,timeGridWeek,listWeek'
                 },
-                buttonText: {
-                    today: '今日',
-                    month: '月',
-                    week: '週',
-                },
-                events: '/api/events', 
                 eventClick: function(info) {
                     info.jsEvent.preventDefault(); 
                     if (info.event.url) {
-                        window.location.href = info.event.url; // 設定されたURLに遷移
+                        window.open(info.event.url);
                     }
                 }
             });

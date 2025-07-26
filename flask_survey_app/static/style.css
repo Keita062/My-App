@@ -15,6 +15,16 @@
   --color-idea-hover: #d97706;      /* Amber 600 */
   --color-payroll: #06b6d4;         /* Cyan 500 */
   --color-payroll-hover: #0891b2;   /* Cyan 600 */
+  --color-research: #8b5cf6;        /* Violet 500 */
+  --color-research-hover: #7c3aed;  /* Violet 600 */
+  --color-memo: #f97316;            /* Orange 500 */
+  --color-memo-hover: #ea580c;      /* Orange 600 */
+  --color-dashboard: #6366f1;       /* Indigo 500 */
+  --color-dashboard-hover: #4f46e5; /* Indigo 600 */
+  /* 【新規追加】 */
+  --color-todo: #d946ef;            /* Fuchsia 500 */
+  --color-todo-hover: #c026d3;      /* Fuchsia 600 */
+
 
   /* --- テキストカラー --- */
   --color-text-base: #1f2937;       /* Gray 800 */
@@ -63,18 +73,6 @@
   --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --transition-base: all 0.2s ease-in-out;
-
-  /* ... */
-  --color-research: #8b5cf6;      /* Violet 500 */
-  --color-research-hover: #7c3aed;/* Violet 600 */
-  /* ... */
-
-  --color-memo: #f97316;          /* Orange 500 */
-  --color-memo-hover: #ea580c;    /* Orange 600 */
-
-  /* ... */
-    --color-dashboard: #6366f1;      /* Indigo 500 */
-    --color-dashboard-hover: #4f46e5;/* Indigo 600 */
 }
 
 /* ===============================================
@@ -188,14 +186,18 @@ hr {
    =============================================== */
 /* --- ポータルページ --- */
 .portal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-6); }
-.portal-card h2 { margin-top: 0; }
-.portal-card .btn { margin-top: var(--spacing-4); }
-.portal-card .color-survey { color: var(--color-primary); }
-.portal-card .color-report { color: var(--color-success); }
-.portal-card .color-idea { color: var(--color-idea); }
-.portal-card .color-payroll { color: var(--color-payroll); }
-.portal-card-unimplemented { background-color: var(--color-bg-muted); border: 1px dashed var(--color-border); }
-.portal-card-unimplemented h2 { color: var(--color-text-muted); }
+.card-link { text-decoration: none; color: inherit; }
+.portal-grid h2 { margin-top: 0; }
+.color-survey { color: var(--color-primary); }
+.color-report { color: var(--color-success); }
+.color-idea { color: var(--color-idea); }
+.color-payroll { color: var(--color-payroll); }
+.color-research { color: var(--color-research); }
+.color-memo { color: var(--color-memo); }
+.color-dashboard { color: var(--color-dashboard); }
+/* 【新規追加】 */
+.color-todo { color: var(--color-todo); }
+
 
 /* --- 一覧ページ (汎用) --- */
 .list-container { max-width: var(--container-width-narrow); }
@@ -329,6 +331,16 @@ hr {
     background-color: var(--color-success) !important;
     border-color: var(--color-success) !important;
 }
+.event-interview {
+    background-color: var(--color-research) !important;
+    border-color: var(--color-research) !important;
+}
+/* 【新規追加】 */
+.event-todo {
+    background-color: var(--color-todo) !important;
+    border-color: var(--color-todo) !important;
+}
+
 
 /* --- 日報アプリ（タスク管理対応） --- */
 .report-divider {
@@ -380,14 +392,7 @@ hr {
     margin-top: 0; 
 }
 
-/* (既存のボタンスタイルは省略) */
-.btn-research { background-color: var(--color-research); }
-.btn-research:hover { background-color: var(--color-research-hover); }
-
-/* (既存のポータルカードスタイルは省略) */
-.portal-card .color-research { color: var(--color-research); }
-
-/* --- 【新規】企業研究ツール --- */
+/* --- 企業研究ツール --- */
 .filter-bar-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -407,11 +412,6 @@ hr {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: var(--spacing-6);
-}
-.card-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
 }
 .research-card-header {
     display: flex;
@@ -469,20 +469,7 @@ hr {
 }
 .form-section:first-child h3 { margin-top: 0; }
 
-/* --- カレンダーのイベント色を追加 --- */
-.event-interview {
-    background-color: var(--color-research) !important;
-    border-color: var(--color-research) !important;
-}
-
-/* (既存のボタンスタイルは省略) */
-.btn-memo { background-color: var(--color-memo); }
-.btn-memo:hover { background-color: var(--color-memo-hover); }
-
-/* (既存のポータルカードスタイルは省略) */
-.portal-card .color-memo { color: var(--color-memo); }
-
-/* --- 【新規】メモツール --- */
+/* --- メモツール --- */
 .memo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -560,14 +547,8 @@ hr {
 .markdown-preview th {
     background-color: var(--color-bg-muted);
 }
-/* (既存のボタンスタイルは省略) */
-.btn-dashboard { background-color: var(--color-dashboard); }
-.btn-dashboard:hover { background-color: var(--color-dashboard-hover); }
 
-/* (既存のポータルカードスタイルは省略) */
-.portal-card .color-dashboard { color: var(--color-dashboard); }
-
-/* --- 【新規】分析ダッシュボード --- */
+/* --- 分析ダッシュボード --- */
 .upload-form .form-control-file {
     display: block;
     width: 100%;

@@ -13,3 +13,4 @@ matplotlib
 seaborn
 openpyxl
 japanize-matplotlib
+setuptools
