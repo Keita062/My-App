@@ -33,6 +33,7 @@ from memo_app.models import Memo
 
 # アプリケーション7: 分析ダッシュボード
 from dashboard_app.app import dashboard_bp
+from dashboard_app.models import AnalysisHistory
 
 # アプリケーション8: ToDoリスト
 from todo_app.app import todo_bp
@@ -70,6 +71,7 @@ def create_app():
     memo_app_dir = os.path.join(basedir, 'memo_app')
     todo_app_dir = os.path.join(basedir, 'todo_app')
     budget_app_dir = os.path.join(basedir, 'budget_app')
+    dashboard_app_dir = os.path.join(basedir, 'dashboard_app')
 
 
     # --- データベース設定 ---
@@ -82,7 +84,9 @@ def create_app():
         'research': 'sqlite:///' + os.path.join(research_app_dir, 'research.db'),
         'memo': 'sqlite:///' + os.path.join(memo_app_dir, 'memo.db'),
         'todo': 'sqlite:///' + os.path.join(todo_app_dir, 'todo.db'),
-        'budget': 'sqlite:///' + os.path.join(budget_app_dir, 'budget.db')
+        'budget': 'sqlite:///' + os.path.join(budget_app_dir, 'budget.db'),
+        # 【新規追加】
+        'dashboard': 'sqlite:///' + os.path.join(dashboard_app_dir, 'dashboard.db')
     }
     
     # --- 拡張機能の初期化 ---
@@ -98,7 +102,6 @@ def create_app():
         except (json.JSONDecodeError, TypeError):
             return []
 
-    # 【新規追加】数値を3桁区切りにするフィルター
     @app.template_filter('toLocaleString')
     def to_locale_string_filter(value):
         if isinstance(value, (int, float)):
@@ -127,25 +130,19 @@ def create_app():
         """カレンダー用のイベントデータをJSONで返すAPI"""
         events = []
         
-        # 1. アイディアフォームのイベント
+        # (イベント取得ロジックは変更なし)
         ideas = Idea.query.all()
         for idea in ideas:
             events.append({'title': f"【ｱｲﾃﾞｨｱ】{idea.title}", 'start': idea.creation_date.isoformat(), 'url': url_for('idea.edit_idea', id=idea.id), 'className': 'event-idea'})
             if idea.due_date:
                 events.append({'title': f"【目標】{idea.title}", 'start': idea.due_date.isoformat(), 'url': url_for('idea.edit_idea', id=idea.id), 'className': 'event-idea-due'})
-
-        # 2. ES記入フォームの締切
         surveys = Survey.query.all()
         for survey in surveys:
             if survey.deadline:
                 events.append({'title': f"【ES締切】{survey.company_name}", 'start': survey.deadline.isoformat(), 'url': url_for('survey.detail_survey', id=survey.id), 'className': 'event-survey'})
-        
-        # 3. 日報
         reports = Report.query.all()
         for report in reports:
             events.append({'title': "【日報】提出済", 'start': report.report_date.isoformat(), 'url': url_for('report.list_reports'), 'className': 'event-report'})
-            
-        # 4. 企業研究
         companies = Company.query.all()
         for company in companies:
             if company.es_deadline:
@@ -153,8 +150,6 @@ def create_app():
             for event in company.events:
                 if '面接' in event.event_type:
                     events.append({'title': f"【面接】{company.company_name}", 'start': event.event_date.isoformat(), 'url': url_for('research.detail_company', id=company.id), 'className': 'event-interview'})
-
-        # 5. ToDoリストの期日
         tasks = Todo.query.filter(Todo.due_date.isnot(None)).all()
         for task in tasks:
             events.append({
@@ -163,7 +158,6 @@ def create_app():
                 'url': url_for('todo.list_tasks'),
                 'className': 'event-todo'
             })
-
 
         return jsonify(events)
 

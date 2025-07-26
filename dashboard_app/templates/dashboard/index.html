@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>分析ダッシュボード - データ入力</title>
+    <title>分析ダッシュボード</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
         <div class="page-header">
+            <a href="{{ url_for('index') }}" class="link">&larr; ポータルに戻る</a>
             <h1>分析ダッシュボード</h1>
-            <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
         </div>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -21,7 +21,7 @@
             {% endif %}
         {% endwith %}
 
-        <div class="card">
+        <div class="card mb-2">
             <h2>分析するデータをアップロード</h2>
             <p>CSVまたはExcel形式のファイルをアップロードしてください。</p>
             <form method="post" enctype="multipart/form-data" class="upload-form">
@@ -30,6 +30,41 @@
                 </div>
                 <button type="submit" class="btn btn-primary">アップロードして分析開始</button>
             </form>
+        </div>
+
+        <div class="card">
+            <h2>分析履歴</h2>
+            <div class="table-container">
+                <table class="payroll-table">
+                    <thead>
+                        <tr>
+                            <th>ファイル名</th>
+                            <th>分析日時</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for history in histories %}
+                        <tr>
+                            <td>{{ history.filename }}</td>
+                            <td>{{ history.analysis_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td>
+                                <div class="list-item-actions">
+                                    <a href="{{ url_for('dashboard.view_history', id=history.id) }}" class="btn btn-secondary btn-sm">結果を表示</a>
+                                    <form action="{{ url_for('dashboard.delete_history', id=history.id) }}" method="post" onsubmit="return confirm('この履歴を削除しますか？');">
+                                        <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center">分析履歴はありません。</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </body>

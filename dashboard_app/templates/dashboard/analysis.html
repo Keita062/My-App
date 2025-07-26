@@ -1,24 +1,23 @@
-<!-- dashboard/analysis.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>分析結果: {{ filename }}</title>
+    <title>分析結果: {{ history.filename }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
         <div class="page-header">
-            <h1>分析結果: {{ filename }}</h1>
-            <a href="{{ url_for('dashboard.index') }}" class="link">&larr; 別のデータを分析する</a>
+            <a href="{{ url_for('dashboard.index') }}" class="link">&larr; 履歴一覧に戻る</a>
+            <h1>分析結果: {{ history.filename }}</h1>
         </div>
 
         <!-- データプレビュー -->
         <div class="card mb-2">
             <h2>データプレビュー (先頭50行)</h2>
             <div class="table-container">
-                {{ preview_html | safe }}
+                {{ history.preview_html | safe }}
             </div>
         </div>
 
@@ -26,7 +25,7 @@
         <div class="card mb-2">
             <h2>基本統計量</h2>
             <div class="table-container">
-                {{ stats_html | safe }}
+                {{ history.stats_html | safe }}
             </div>
         </div>
 
