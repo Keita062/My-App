@@ -21,10 +21,10 @@
   --color-memo-hover: #ea580c;      /* Orange 600 */
   --color-dashboard: #6366f1;       /* Indigo 500 */
   --color-dashboard-hover: #4f46e5; /* Indigo 600 */
-  /* 【新規追加】 */
   --color-todo: #d946ef;            /* Fuchsia 500 */
   --color-todo-hover: #c026d3;      /* Fuchsia 600 */
-
+  --color-budget: #10b981;          /* Emerald 500 */
+  --color-budget-hover: #059669;    /* Emerald 600 */
 
   /* --- テキストカラー --- */
   --color-text-base: #1f2937;       /* Gray 800 */
@@ -195,8 +195,8 @@ hr {
 .color-research { color: var(--color-research); }
 .color-memo { color: var(--color-memo); }
 .color-dashboard { color: var(--color-dashboard); }
-/* 【新規追加】 */
 .color-todo { color: var(--color-todo); }
+.color-budget { color: var(--color-budget); }
 
 
 /* --- 一覧ページ (汎用) --- */
@@ -335,10 +335,13 @@ hr {
     background-color: var(--color-research) !important;
     border-color: var(--color-research) !important;
 }
-/* 【新規追加】 */
 .event-todo {
     background-color: var(--color-todo) !important;
     border-color: var(--color-todo) !important;
+}
+.event-budget {
+    background-color: var(--color-budget) !important;
+    border-color: var(--color-budget) !important;
 }
 
 
@@ -356,14 +359,14 @@ hr {
     margin-bottom: 0;
 }
 .report-task-list li {
-    margin-bottom: var(--spacing-1); /* 各タスク間の少しの余白 */
+    margin-bottom: var(--spacing-1);
 }
 
-/* 【新規】整形済みテキスト表示用のスタイル */
+/* 整形済みテキスト表示用のスタイル */
 .report-pre-formatted {
-    white-space: pre-wrap;       /* 改行とスペースを維持し、自動で折り返す */
-    word-wrap: break-word;       /* 長い単語も折り返す */
-    font-family: inherit;        /* ページの基本フォントを使用 */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: inherit;
     font-size: var(--font-size-base);
     line-height: var(--line-height-base);
     color: var(--color-text-base);
@@ -400,7 +403,7 @@ hr {
     align-items: flex-end;
 }
 .filter-bar-grid .form-actions {
-    grid-column: 1 / -1; /* 全幅を占める */
+    grid-column: 1 / -1;
     justify-content: flex-start;
 }
 @media (min-width: 1024px) {
@@ -590,4 +593,24 @@ hr {
     height: auto;
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-base);
+}
+
+/* --- 予算調整ツール --- */
+.budget-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-6);
+    text-align: center;
+}
+.budget-summary-grid h4 {
+    margin: 0 0 var(--spacing-2) 0;
+    font-size: 1rem;
+    color: var(--color-text-muted);
+}
+.budget-summary-grid p {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-heading);
 }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>クライアント管理</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container form-container">
+    <div class="page-header">
+        <h1>クライアント管理</h1>
+        <a href="{{ url_for('budget.index') }}" class="link">&larr; 予算調整ツールに戻る</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card mb-2">
+        <h2>新しいクライアントを追加</h2>
+        <form action="{{ url_for('budget.add_client') }}" method="post" class="form-grid">
+            <div class="form-group">
+                <label for="name">クライアント名</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="commission_rate">手数料率 (%)</label>
+                <input type="number" step="0.1" id="commission_rate" name="commission_rate" value="20.0" required>
+            </div>
+            <div class="form-actions" style="grid-column: 1 / -1;">
+                <button type="submit" class="btn btn-primary">追加</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>クライアント一覧</h2>
+        <ul class="generic-list">
+            {% for client in clients %}
+            <li>
+                <div class="list-item-content">
+                    <form action="{{ url_for('budget.edit_client', id=client.id) }}" method="post" style="display: flex; flex-grow: 1; align-items: center; gap: 1rem;">
+                        <input type="text" name="name" value="{{ client.name }}" class="form-control" style="flex-grow: 1;">
+                        <input type="number" step="0.1" name="commission_rate" value="{{ client.commission_rate }}" class="form-control" style="width: 100px;">
+                        <button type="submit" class="btn btn-secondary btn-sm">更新</button>
+                    </form>
+                    <form action="{{ url_for('budget.delete_client', id=client.id) }}" method="post" onsubmit="return confirm('このクライアントを削除しますか？');">
+                        <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                    </form>
+                </div>
+            </li>
+            {% else %}
+            <li>登録されているクライアントはありません。</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+</body>
+</html>

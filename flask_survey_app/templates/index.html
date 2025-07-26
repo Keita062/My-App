@@ -51,10 +51,15 @@
                 <h2 class="color-dashboard">分析ダッシュボード</h2>
                 <p>CSVデータをアップロードして可視化・分析します。</p>
             </a>
-            <!-- 【新規追加】ToDoリスト -->
+            <!-- ToDoリスト -->
             <a href="{{ url_for('todo.list_tasks') }}" class="card card-link card-hover">
                 <h2 class="color-todo">ToDoリスト</h2>
                 <p>日々のタスクを管理します。</p>
+            </a>
+            <!-- 予算調整作成機能 -->
+            <a href="{{ url_for('budget.index') }}" class="card card-link card-hover">
+                <h2 class="color-budget">予算調整作成機能</h2>
+                <p>広告費などの予算シミュレーションを行います。</p>
             </a>
         </div>
     </div>

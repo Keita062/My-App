@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>予算調整作成機能</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>予算調整作成機能</h1>
+        <div>
+            <a href="{{ url_for('budget.list_clients') }}" class="btn btn-secondary">クライアント管理</a>
+            <a href="{{ url_for('index') }}" class="link" style="margin-left: 1rem;">ポータルに戻る &rarr;</a>
+        </div>
+    </div>
+
+    <div class="card mb-2">
+        <h2>基本設定</h2>
+        <div class="form-grid" id="settings-form">
+            <div class="form-group">
+                <label for="gross_amount">グロス金額 (円)</label>
+                <input type="number" id="gross_amount" name="gross_amount" value="1000000">
+            </div>
+            <div class="form-group">
+                <label for="calculation_method">計算方法</label>
+                <select id="calculation_method" name="calculation_method">
+                    <option value="内掛け">内掛け</option>
+                    <option value="外掛け">外掛け</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="broadcast_amount">bload分 (円)</label>
+                <input type="number" id="broadcast_amount" name="broadcast_amount" value="0">
+            </div>
+            <div class="form-group">
+                <label for="client_id">クライアント</label>
+                <select id="client_id" name="client_id">
+                    {% for client in clients %}
+                    <option value="{{ client.id }}">{{ client.name }} ({{ client.commission_rate }}%)</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="elapsed_days">本日までの経過日数</label>
+                <input type="number" id="elapsed_days" value="1">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>シミュレーション結果</h2>
+        <div class="budget-summary-grid">
+            <div>
+                <h4>ネット金額</h4>
+                <p id="net-amount-view">¥0</p>
+            </div>
+            <div>
+                <h4>使用できる金額</h4>
+                <p id="usable-amount-view">¥0</p>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table class="payroll-table" id="creatives-table">
+                <thead>
+                    <tr>
+                        <th>クリエイティブ名</th>
+                        <th>予算 (円)</th>
+                        <th>本日までの消化金額 (円)</th>
+                        <th>これからの日予算 (円)</th>
+                        <th>着地見込み (円)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- JSで動的に行が追加される -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5">
+                            <button type="button" id="add-creative-btn" class="btn btn-secondary btn-sm">クリエイティブを追加</button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const settingsForm = document.getElementById('settings-form');
+    const creativesTableBody = document.querySelector('#creatives-table tbody');
+    const addCreativeBtn = document.getElementById('add-creative-btn');
+
+    const calculateBudget = async () => {
+        const today = new Date();
+        const totalDays = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+
+        const payload = {
+            gross_amount: document.getElementById('gross_amount').value,
+            calculation_method: document.getElementById('calculation_method').value,
+            broadcast_amount: document.getElementById('broadcast_amount').value,
+            client_id: document.getElementById('client_id').value,
+            elapsed_days: document.getElementById('elapsed_days').value,
+            total_days: totalDays,
+            creatives: []
+        };
+
+        creativesTableBody.querySelectorAll('tr').forEach(row => {
+            payload.creatives.push({
+                name: row.querySelector('input[name="creative_name"]').value,
+                budget: row.querySelector('input[name="creative_budget"]').value,
+                actuals: row.querySelector('input[name="creative_actuals"]').value
+            });
+        });
+
+        const response = await fetch("{{ url_for('budget.calculate') }}", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            console.error('Calculation failed');
+            return;
+        }
+
+        const result = await response.json();
+        
+        document.getElementById('net-amount-view').textContent = `¥${Math.round(result.net_amount).toLocaleString()}`;
+        document.getElementById('usable-amount-view').textContent = `¥${Math.round(result.usable_amount).toLocaleString()}`;
+
+        result.creative_results.forEach((creative, index) => {
+            const row = creativesTableBody.rows[index];
+            if (row) {
+                row.cells[3].textContent = `¥${Math.round(creative.daily_budget_future).toLocaleString()}`;
+                row.cells[4].textContent = `¥${Math.round(creative.projected_landing).toLocaleString()}`;
+            }
+        });
+    };
+
+    const addCreativeRow = () => {
+        const newRow = creativesTableBody.insertRow();
+        newRow.innerHTML = `
+            <td><input type="text" name="creative_name" class="form-control" placeholder="クリエイティブ名"></td>
+            <td><input type="number" name="creative_budget" class="form-control" value="0"></td>
+            <td><input type="number" name="creative_actuals" class="form-control" value="0"></td>
+            <td>¥0</td>
+            <td>¥0</td>
+            <td><button type="button" class="btn btn-danger btn-sm remove-creative-btn">削除</button></td>
+        `;
+    };
+
+    addCreativeBtn.addEventListener('click', addCreativeRow);
+    
+    creativesTableBody.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-creative-btn')) {
+            e.target.closest('tr').remove();
+            calculateBudget();
+        }
+    });
+
+    settingsForm.addEventListener('input', calculateBudget);
+    creativesTableBody.addEventListener('input', calculateBudget);
+    
+    // 初期状態で1行追加して計算
+    addCreativeRow();
+    calculateBudget();
+});
+</script>
+</body>
+</html>

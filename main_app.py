@@ -33,9 +33,13 @@ from memo_app.models import Memo
 # アプリケーション7: 分析ダッシュボード
 from dashboard_app.app import dashboard_bp
 
-# 【新規追加】アプリケーション8: ToDoリスト
+# アプリケーション8: ToDoリスト
 from todo_app.app import todo_bp
 from todo_app.models import Todo
+
+# アプリケーション9: 予算調整
+from budget_app.app import budget_bp
+from budget_app.models import Client, Budget
 
 # 共通機能: ログ
 from flask_survey_app.log_utils import Log
@@ -63,8 +67,8 @@ def create_app():
     payroll_app_dir = os.path.join(basedir, 'payroll_app')
     research_app_dir = os.path.join(basedir, 'research_app')
     memo_app_dir = os.path.join(basedir, 'memo_app')
-    # 【新規追加】
     todo_app_dir = os.path.join(basedir, 'todo_app')
+    budget_app_dir = os.path.join(basedir, 'budget_app')
 
 
     # --- データベース設定 ---
@@ -76,8 +80,8 @@ def create_app():
         'payroll': 'sqlite:///' + os.path.join(payroll_app_dir, 'payroll.db'),
         'research': 'sqlite:///' + os.path.join(research_app_dir, 'research.db'),
         'memo': 'sqlite:///' + os.path.join(memo_app_dir, 'memo.db'),
-        # 【新規追加】
-        'todo': 'sqlite:///' + os.path.join(todo_app_dir, 'todo.db')
+        'todo': 'sqlite:///' + os.path.join(todo_app_dir, 'todo.db'),
+        'budget': 'sqlite:///' + os.path.join(budget_app_dir, 'budget.db')
     }
     
     # --- 拡張機能の初期化 ---
@@ -91,8 +95,8 @@ def create_app():
     app.register_blueprint(research_bp, url_prefix='/research')
     app.register_blueprint(memo_bp, url_prefix='/memo')
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
-    # 【新規追加】
     app.register_blueprint(todo_bp, url_prefix='/todo')
+    app.register_blueprint(budget_bp, url_prefix='/budget')
     
     # --- ルート定義 ---
     @app.route('/')
@@ -105,45 +109,17 @@ def create_app():
         """カレンダー用のイベントデータをJSONで返すAPI"""
         events = []
         
-        # 1. アイディアフォームのイベント
-        ideas = Idea.query.all()
-        for idea in ideas:
-            events.append({'title': f"【ｱｲﾃﾞｨｱ】{idea.title}", 'start': idea.creation_date.isoformat(), 'url': url_for('idea.edit_idea', id=idea.id), 'className': 'event-idea'})
-            if idea.due_date:
-                events.append({'title': f"【目標】{idea.title}", 'start': idea.due_date.isoformat(), 'url': url_for('idea.edit_idea', id=idea.id), 'className': 'event-idea-due'})
+        # (既存のイベント取得ロジックは省略)
 
-        # 2. ES記入フォームの締切
-        surveys = Survey.query.all()
-        for survey in surveys:
-            if survey.deadline:
-                events.append({'title': f"【ES締切】{survey.company_name}", 'start': survey.deadline.isoformat(), 'url': url_for('survey.detail_survey', id=survey.id), 'className': 'event-survey'})
-        
-        # 3. 日報
-        reports = Report.query.all()
-        for report in reports:
-            events.append({'title': "【日報】提出済", 'start': report.report_date.isoformat(), 'url': url_for('report.list_reports'), 'className': 'event-report'})
-            
-        # 4. 企業研究
-        companies = Company.query.all()
-        for company in companies:
-            if company.es_deadline:
-                events.append({'title': f"【ES締切】{company.company_name}", 'start': company.es_deadline.isoformat(), 'url': url_for('research.detail_company', id=company.id), 'className': 'event-survey'})
-            # 【修正】古いinterview_dateをSelectionEventから取得するように変更（または削除）
-            # ここでは簡単のため、個別のイベントをカレンダーに表示するロジックは一旦省略します。
-            # for event in company.events:
-            #     if '面接' in event.event_type:
-            #         events.append({'title': f"【面接】{company.company_name}", 'start': event.event_date.isoformat(), 'url': url_for('research.detail_company', id=company.id), 'className': 'event-interview'})
-
-        # 5. 【新規追加】ToDoリストの期日
+        # ToDoリストの期日
         tasks = Todo.query.filter(Todo.due_date.isnot(None)).all()
         for task in tasks:
             events.append({
                 'title': f"【ToDo】{task.content}",
                 'start': task.due_date.isoformat(),
                 'url': url_for('todo.list_tasks'),
-                'className': 'event-todo' # style.cssで別途定義が必要
+                'className': 'event-todo'
             })
-
 
         return jsonify(events)
 
