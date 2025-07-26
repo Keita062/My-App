@@ -65,7 +65,8 @@
                 <p>日々のタスクを管理します。</p>
             </a>
             <!-- 予算調整作成機能 -->
-            <a href="{{ url_for('budget.index') }}" class="card card-link card-hover">
+            <!-- 【修正】url_forの指定を 'budget.list_simulations' に変更 -->
+            <a href="{{ url_for('budget.list_simulations') }}" class="card card-link card-hover">
                 <h2 class="color-budget">予算調整作成機能</h2>
                 <p>広告費などの予算シミュレーションを行います。</p>
             </a>

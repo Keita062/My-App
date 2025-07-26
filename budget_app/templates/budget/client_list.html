@@ -9,8 +9,8 @@
 <body>
 <div class="container form-container">
     <div class="page-header">
+        <a href="{{ url_for('budget.list_simulations') }}" class="link">&larr; 履歴一覧に戻る</a>
         <h1>クライアント管理</h1>
-        <a href="{{ url_for('budget.index') }}" class="link">&larr; 予算調整ツールに戻る</a>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -49,7 +49,7 @@
                         <input type="number" step="0.1" name="commission_rate" value="{{ client.commission_rate }}" class="form-control" style="width: 100px;">
                         <button type="submit" class="btn btn-secondary btn-sm">更新</button>
                     </form>
-                    <form action="{{ url_for('budget.delete_client', id=client.id) }}" method="post" onsubmit="return confirm('このクライアントを削除しますか？');">
+                    <form action="{{ url_for('budget.delete_client', id=client.id) }}" method="post" onsubmit="return confirm('このクライアントを削除しますか？');" style="display: inline-block;">
                         <button type="submit" class="btn btn-danger btn-sm">削除</button>
                     </form>
                 </div>

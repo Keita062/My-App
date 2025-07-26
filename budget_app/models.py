@@ -15,7 +15,7 @@ class Client(db.Model):
     def __repr__(self):
         return f'<Client {self.name}>'
 
-class Budget(db.Model):
+class BudgetSimulation(db.Model):
     """
     作成した予算シミュレーションを保存するモデル
     """
@@ -23,17 +23,24 @@ class Budget(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
+    simulation_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    # 基本設定の入力値を保存
+    target_year = db.Column(db.Integer, nullable=False)
+    target_month = db.Column(db.Integer, nullable=False)
     gross_amount = db.Column(db.Float, nullable=False)
     calculation_method = db.Column(db.String(10), nullable=False) # '内掛け' or '外掛け'
+    commission_rate_used = db.Column(db.Float, nullable=False) # 使用した手数料率
     broadcast_amount = db.Column(db.Float, nullable=False, default=0)
+    remaining_days = db.Column(db.Integer, nullable=False)
+    
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
     
-    # 計算結果やクリエイティブの内訳はJSON形式で保存
-    simulation_data = db.Column(db.Text, nullable=True)
+    # クリエイティブごとの詳細な入力値と計算結果はJSON形式で保存
+    simulation_details = db.Column(db.Text, nullable=False)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    client = db.relationship('Client', backref='budgets')
+    client = db.relationship('Client', backref='simulations')
 
     def __repr__(self):
-        return f'<Budget {self.title}>'
+        return f'<BudgetSimulation {self.title}>'

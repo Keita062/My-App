@@ -40,7 +40,7 @@ from todo_app.models import Todo
 
 # アプリケーション9: 予算調整
 from budget_app.app import budget_bp
-from budget_app.models import Client, Budget
+from budget_app.models import Client, BudgetSimulation
 
 # 共通機能: ログ
 from flask_survey_app.log_utils import Log
@@ -96,8 +96,14 @@ def create_app():
         try:
             return json.loads(value)
         except (json.JSONDecodeError, TypeError):
-            # パースに失敗した場合は空のリストを返す
             return []
+
+    # 【新規追加】数値を3桁区切りにするフィルター
+    @app.template_filter('toLocaleString')
+    def to_locale_string_filter(value):
+        if isinstance(value, (int, float)):
+            return f"{value:,}"
+        return value
 
     # --- Blueprintの登録 ---
     app.register_blueprint(survey_bp, url_prefix='/survey') 
@@ -157,6 +163,7 @@ def create_app():
                 'url': url_for('todo.list_tasks'),
                 'className': 'event-todo'
             })
+
 
         return jsonify(events)
 
