@@ -40,7 +40,7 @@ from todo_app.app import todo_bp
 from todo_app.models import Todo
 
 # アプリケーション9: 予算調整
-from budget_app.app import budget_bp
+from instance.app import budget_bp
 from budget_app.models import Client, BudgetSimulation
 
 # 共通機能: ログ
