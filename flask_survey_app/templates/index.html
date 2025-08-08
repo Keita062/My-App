@@ -24,59 +24,79 @@
         </div>
 
         <div class="portal-grid">
-            <!-- ES記入フォーム -->
+            {# --- ES記入フォーム (survey_appをリファクタリングするまで一時的に無効化) --- #}
+            {#
             <a href="{{ url_for('survey.list_surveys') }}" class="card card-link card-hover">
                 <h2 class="color-survey">ES記入フォーム</h2>
                 <p>ESの質問と回答を管理します。</p>
             </a>
-            <!-- REHATCH日報 -->
-            <a href="{{ url_for('report.list_reports') }}" class="card card-link card-hover">
+            #}
+
+            <a href="{{ url_for('work_report.list_reports') }}" class="card card-link card-hover">
                 <h2 class="color-report">REHATCH日報</h2>
-                <p>日々の業務報告を作成・管理します。</p>
+                <p>日々の業務内容と成果を報告・管理します。</p>
             </a>
-            <!-- アイディア -->
+            
+            {# --- アイディアフォーム (idea_appをリファクタリングするまで一時的に無効化) --- #}
+            {#
             <a href="{{ url_for('idea.list_ideas') }}" class="card card-link card-hover">
-                <h2 class="color-idea">アイディア帳</h2>
-                <p>思いついたアイディアを記録・管理します。</p>
+                <h2 class="color-idea">アイディアフォーム</h2>
+                <p>新しいアイディアを記録し、管理します。</p>
             </a>
-            <!-- 給与計算 -->
+            #}
+            
+            {# --- 給与計算アプリ (payroll_appをリファクタリングするまで一時的に無効化) --- #}
+            {#
             <a href="{{ url_for('payroll.dashboard') }}" class="card card-link card-hover">
-                <h2 class="color-payroll">給与計算</h2>
-                <p>勤務記録から給与を自動計算します。</p>
+                <h2 class="color-payroll">給与計算アプリ</h2>
+                <p>給与計算と明細の管理を行います。</p>
             </a>
-            <!-- 企業研究 -->
+            #}
+
+            {# --- 企業研究ツール (research_appをリファクタリングするまで一時的に無効化) --- #}
+            {#
             <a href="{{ url_for('research.list_companies') }}" class="card card-link card-hover">
                 <h2 class="color-research">企業研究ツール</h2>
-                <p>企業情報や選考状況を一元管理します。</p>
+                <p>企業情報や選考イベントを記録・管理します。</p>
             </a>
-            <!-- メモツール -->
+            #}
+
+            {# --- メモツール (memo_appをリファクタリングするまで一時的に無効化) --- #}
+            {#
             <a href="{{ url_for('memo.list_memos') }}" class="card card-link card-hover">
                 <h2 class="color-memo">メモツール</h2>
-                <p>Markdown対応のメモを管理します。</p>
+                <p>簡単なメモを素早く記録します。</p>
             </a>
-            <!-- 分析ダッシュボード -->
+            #}
+
+            {# --- 分析ダッシュボード (dashboard_appをリファクタリングするまで一時的に無効化) --- #}
+            {#
             <a href="{{ url_for('dashboard.index') }}" class="card card-link card-hover">
                 <h2 class="color-dashboard">分析ダッシュボード</h2>
-                <p>CSVデータをアップロードして可視化・分析します。</p>
+                <p>アップロードしたデータを分析・可視化します。</p>
             </a>
-            <!-- ToDoリスト -->
+            #}
+
+            {# --- ToDoリスト (todo_appをリファクタリングするまで一時的に無効化) --- #}
+            {#
             <a href="{{ url_for('todo.list_tasks') }}" class="card card-link card-hover">
                 <h2 class="color-todo">ToDoリスト</h2>
-                <p>日々のタスクを管理します。</p>
+                <p>タスクを管理し、進捗を追跡します。</p>
             </a>
-            <!-- 予算調整作成機能 -->
-            <!-- 【修正】url_forの指定を 'budget.list_simulations' に変更 -->
-            <a href="{{ url_for('budget.list_simulations') }}" class="card card-link card-hover">
-                <h2 class="color-budget">予算調整作成機能</h2>
-                <p>広告費などの予算シミュレーションを行います。</p>
+            #}
+            
+            {# --- 予算調整 (budget_appをリファクタリングするまで一時的に無効化) --- #}
+            {#
+            <a href="{{ url_for('budget.list') }}" class="card card-link card-hover">
+                <h2 class="color-budget">予算調整</h2>
+                <p>予算シミュレーションと実績管理を行います。</p>
             </a>
+            #}
         </div>
     </div>
-
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // カレンダーの初期化
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
