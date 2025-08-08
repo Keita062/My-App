@@ -34,3 +34,5 @@ uploads/
 /dashboard_app/static/plots/
 
 .csv
+# Instance folder
+/instance/
