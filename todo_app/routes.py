@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from datetime import datetime
-from flask_survey_app.extensions import db
+from extensions import db  # 変更点：共通のextensions.pyからdbをインポート
 from .models import Todo
 
 todo_bp = Blueprint(
@@ -9,6 +9,8 @@ todo_bp = Blueprint(
     template_folder='templates',
     static_folder='static'
 )
+
+# ↓↓↓↓↓↓  これ以下のルート定義のコードは、元のapp.pyから一切変更ありません ↓↓↓↓↓↓
 
 @todo_bp.route('/')
 def list_tasks():
@@ -57,16 +59,12 @@ def update_task(id):
     task = Todo.query.get_or_404(id)
     content = request.form.get('content')
     due_date_str = request.form.get('due_date')
-
+    
     if not content:
-        return jsonify({'success': False, 'message': '内容は必須です。'})
+        return jsonify({'success': False, 'error': '内容は必須です。'})
 
     task.content = content
     task.due_date = datetime.strptime(due_date_str, '%Y-%m-%dT%H:%M') if due_date_str else None
-    db.session.commit()
     
-    return jsonify({
-        'success': True,
-        'content': task.content,
-        'due_date_formatted': task.due_date.strftime('%Y/%m/%d %H:%M') if task.due_date else '期日なし'
-    })
+    db.session.commit()
+    return jsonify({'success': True})

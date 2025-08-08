@@ -2,45 +2,61 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>分析結果: {{ history.filename }}</title>
+    <title>分析結果 - {{ filename }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .analysis-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .plot-image {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="page-header">
-            <a href="{{ url_for('dashboard.index') }}" class="link">&larr; 履歴一覧に戻る</a>
-            <h1>分析結果: {{ history.filename }}</h1>
+        <a href="{{ url_for('dashboard.index') }}" class="btn-secondary mb-2">&larr; ダッシュボードに戻る</a>
+        <h1>分析結果: <span class="filename">{{ filename }}</span></h1>
+
+        <div class="analysis-section">
+            <h2>データプレビュー（先頭50行）</h2>
+            <div>{{ preview|safe }}</div>
         </div>
 
-        <!-- データプレビュー -->
-        <div class="card mb-2">
-            <h2>データプレビュー (先頭50行)</h2>
-            <div class="table-container">
-                {{ history.preview_html | safe }}
-            </div>
-        </div>
-
-        <!-- 基本統計量 -->
-        <div class="card mb-2">
+        <div class="analysis-section">
             <h2>基本統計量</h2>
-            <div class="table-container">
-                {{ history.stats_html | safe }}
-            </div>
+            <div>{{ stats|safe }}</div>
         </div>
 
-        <!-- 可視化グラフ -->
-        <div class="card mb-2">
-            <h2>データの可視化</h2>
-            <div class="plot-grid">
-                {% for plot_path in plot_paths %}
-                <div class="plot-item">
-                    <img src="{{ url_for('dashboard.static', filename=plot_path) }}" alt="Data Plot">
-                </div>
-                {% else %}
-                <p>表示できるグラフがありません。</p>
+        <div class="analysis-section">
+            <h2>生成されたグラフ</h2>
+            {% if plots %}
+                {% for plot_path in plots %}
+                    <img src="{{ url_for('static', filename=plot_path) }}" alt="分析グラフ" class="plot-image">
                 {% endfor %}
-            </div>
+            {% else %}
+                <p>生成されたグラフはありません。</p>
+            {% endif %}
         </div>
     </div>
 </body>

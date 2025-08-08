@@ -24,74 +24,50 @@
         </div>
 
         <div class="portal-grid">
-            {# --- ES記入フォーム (survey_appをリファクタリングするまで一時的に無効化) --- #}
-            {#
             <a href="{{ url_for('survey.list_surveys') }}" class="card card-link card-hover">
                 <h2 class="color-survey">ES記入フォーム</h2>
                 <p>ESの質問と回答を管理します。</p>
             </a>
-            #}
-
+            
             <a href="{{ url_for('work_report.list_reports') }}" class="card card-link card-hover">
                 <h2 class="color-report">REHATCH日報</h2>
                 <p>日々の業務内容と成果を報告・管理します。</p>
             </a>
             
-            {# --- アイディアフォーム (idea_appをリファクタリングするまで一時的に無効化) --- #}
-            {#
             <a href="{{ url_for('idea.list_ideas') }}" class="card card-link card-hover">
                 <h2 class="color-idea">アイディアフォーム</h2>
                 <p>新しいアイディアを記録し、管理します。</p>
             </a>
-            #}
             
-            {# --- 給与計算アプリ (payroll_appをリファクタリングするまで一時的に無効化) --- #}
-            {#
             <a href="{{ url_for('payroll.dashboard') }}" class="card card-link card-hover">
                 <h2 class="color-payroll">給与計算アプリ</h2>
                 <p>給与計算と明細の管理を行います。</p>
             </a>
-            #}
 
-            {# --- 企業研究ツール (research_appをリファクタリングするまで一時的に無効化) --- #}
-            {#
             <a href="{{ url_for('research.list_companies') }}" class="card card-link card-hover">
                 <h2 class="color-research">企業研究ツール</h2>
                 <p>企業情報や選考イベントを記録・管理します。</p>
             </a>
-            #}
 
-            {# --- メモツール (memo_appをリファクタリングするまで一時的に無効化) --- #}
-            {#
             <a href="{{ url_for('memo.list_memos') }}" class="card card-link card-hover">
                 <h2 class="color-memo">メモツール</h2>
                 <p>簡単なメモを素早く記録します。</p>
             </a>
-            #}
 
-            {# --- 分析ダッシュボード (dashboard_appをリファクタリングするまで一時的に無効化) --- #}
-            {#
             <a href="{{ url_for('dashboard.index') }}" class="card card-link card-hover">
                 <h2 class="color-dashboard">分析ダッシュボード</h2>
                 <p>アップロードしたデータを分析・可視化します。</p>
             </a>
-            #}
 
-            {# --- ToDoリスト (todo_appをリファクタリングするまで一時的に無効化) --- #}
-            {#
             <a href="{{ url_for('todo.list_tasks') }}" class="card card-link card-hover">
                 <h2 class="color-todo">ToDoリスト</h2>
                 <p>タスクを管理し、進捗を追跡します。</p>
             </a>
-            #}
             
-            {# --- 予算調整 (budget_appをリファクタリングするまで一時的に無効化) --- #}
-            {#
-            <a href="{{ url_for('budget.list') }}" class="card card-link card-hover">
+            <a href="{{ url_for('budget.list_simulations') }}" class="card card-link card-hover">
                 <h2 class="color-budget">予算調整</h2>
                 <p>予算シミュレーションと実績管理を行います。</p>
             </a>
-            #}
         </div>
     </div>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
@@ -115,11 +91,9 @@
             });
             calendar.render();
 
-            // カレンダー表示/非表示トグルの処理
             const toggle = document.getElementById('calendar-toggle');
             const calendarWrapper = document.getElementById('calendar-wrapper');
             
-            // ローカルストレージから表示状態を読み込む
             const isCalendarVisible = localStorage.getItem('calendarVisible') !== 'false';
             toggle.checked = isCalendarVisible;
             calendarWrapper.style.display = isCalendarVisible ? 'block' : 'none';

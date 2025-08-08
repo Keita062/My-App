@@ -20,11 +20,10 @@ class DevelopmentConfig(Config):
     """開発環境用の設定"""
     DEBUG = True
     
-    # メインとなるDB（デフォルト）の場所を設定
-    # 元々 survey.db だったものを指定 
+    # メインのDB（デフォルト）
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(basedir, 'instance', 'survey.db')}"
     
-    # 複数のデータベースの場所を 'BINDS' として一元管理 
+    # 複数のデータベースの場所を 'BINDS' として一元管理
     SQLALCHEMY_BINDS = {
         'logs':       f"sqlite:///{os.path.join(basedir, 'instance', 'log.db')}",
         'report':     f"sqlite:///{os.path.join(basedir, 'instance', 'report.db')}",
@@ -37,12 +36,11 @@ class DevelopmentConfig(Config):
         'dashboard':  f"sqlite:///{os.path.join(basedir, 'instance', 'dashboard.db')}"
     }
 
-# 本番環境用の設定（今回は変更なし）
 class ProductionConfig(Config):
+    """本番環境用の設定"""
     DEBUG = False
-    # ... 本番用の設定を記述 ...
+    # (本番用の設定はここに記述)
 
-# 設定の呼び出し名を定義
 config = {
     'development': DevelopmentConfig,
     'production': ProductionConfig,

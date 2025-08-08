@@ -1,4 +1,4 @@
-from extensions import db  
+from extensions import db
 from datetime import datetime
 
 class Report(db.Model):
@@ -6,7 +6,6 @@ class Report(db.Model):
     日報データを保存するためのモデル
     開始報告と完了報告を1つのレコードで管理
     """
-
     id = db.Column(db.Integer, primary_key=True)
     report_date = db.Column(db.Date, nullable=False, unique=True) # 日付はユニークに
 
