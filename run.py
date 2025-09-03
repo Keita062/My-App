@@ -17,7 +17,7 @@ def create_app(config_name=None):
         template_folder='flask_survey_app/templates',
         static_folder='flask_survey_app/static'
     )
-    
+
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
@@ -26,13 +26,13 @@ def create_app(config_name=None):
     # --- Blueprintの登録 ---
     from flask_survey_app.routes import survey_bp
     app.register_blueprint(survey_bp, url_prefix='/survey')
-    
+
     from work_report_app.routes import report_bp
     app.register_blueprint(report_bp, url_prefix='/report')
 
     from todo_app.routes import todo_bp
     app.register_blueprint(todo_bp, url_prefix='/todo')
-    
+
     from idea_app.routes import idea_bp
     app.register_blueprint(idea_bp, url_prefix='/idea')
 
@@ -44,23 +44,23 @@ def create_app(config_name=None):
 
     from memo_app.routes import memo_bp
     app.register_blueprint(memo_bp, url_prefix='/memo')
-    
+
     from dashboard_app.routes import dashboard_bp
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
 
     from budget_app.routes import budget_bp
     app.register_blueprint(budget_bp, url_prefix='/budget')
 
+
     # --- 共通機能の登録 ---
     register_routes(app)
     register_filters(app)
     register_request_handlers(app)
-    
+
     # --- カスタムコマンドの登録 ---
     @app.cli.command("init-db")
     def init_db_command():
         """データベースのテーブルをすべて作成する"""
-        # ★★★ ここにすべてのモデルをインポートする処理を追加 ★★★
         from flask_survey_app import models
         from work_report_app import models
         from todo_app import models
@@ -70,37 +70,36 @@ def create_app(config_name=None):
         from memo_app import models
         from dashboard_app import models
         from budget_app import models
-        
+
         with app.app_context():
+            # --- ★★★デバッグコード：データベースのパスをターミナルに表示★★★ ---
+            click.echo("--- Attempting to create databases at the following locations: ---")
+            if 'SQLALCHEMY_DATABASE_URI' in app.config:
+                click.echo(f"Default DB: {app.config['SQLALCHEMY_DATABASE_URI']}")
+            if 'SQLALCHEMY_BINDS' in app.config:
+                for bind, uri in app.config['SQLALCHEMY_BINDS'].items():
+                    click.echo(f"Bind '{bind}': {uri}")
+            click.echo("------------------------------------------------------------------")
+            # --- ★★★デバッグコードここまで★★★ ---
+
             db.create_all()
         click.echo("Initialized the database.")
 
     return app
 
 # (以降のヘルパー関数は変更なし)
-# ...
-
 def register_routes(app):
-    """ポータルページや共通APIなど、特定のアプリに属さないルートを登録"""
-    
     @app.route('/')
     def index():
-        """ポータルページを表示"""
         return render_template('index.html')
-
     @app.route('/api/events')
     def get_events():
-        """カレンダー用のイベントデータをJSONで返すAPI"""
-        # 必要なモデルをインポート
         from idea_app.models import Idea
         from flask_survey_app.models import Survey
         from work_report_app.models import Report
         from research_app.models import Company, SelectionEvent
         from todo_app.models import Todo
-        
         events = []
-        # ここに、元のmain_app.pyにあったイベント取得ロジックをすべて記述
-        # (例)
         reports = Report.query.all()
         for report in reports:
             events.append({
@@ -109,12 +108,9 @@ def register_routes(app):
                 'url': url_for('work_report.list_reports'), 
                 'className': 'event-report'
             })
-        # ... 他のすべてのイベント取得ロジック ...
-        
         return jsonify(events)
 
 def register_filters(app):
-    """テンプレートで使うカスタムフィルターを登録"""
     @app.template_filter('fromjson')
     def fromjson_filter(value):
         if not isinstance(value, str): return []
@@ -127,19 +123,16 @@ def register_filters(app):
         return value
 
 def register_request_handlers(app):
-    """リクエスト毎の共通処理（アクセスログなど）を登録"""
-    from flask_survey_app.models import Log
-
-    @app.after_request
-    def log_response_info(response):
-        if request.path.startswith(('/static', '/api')):
-            return response
-        
-        new_log = Log(ip_address=request.remote_addr, path=request.path, method=request.method)
-        db.session.add(new_log)
-        db.session.commit()
-        
-        return response
+    # from flask_survey_app.models import Log
+    # @app.after_request
+    # def log_response_info(response):
+    #     if request.path.startswith(('/static', '/api')):
+    #         return response
+    #     new_log = Log(ip_address=request.remote_addr, path=request.path, method=request.method)
+    #     db.session.add(new_log)
+    #     db.session.commit()
+    #     return response
+    pass
 
 # --- アプリケーションの実行 ---
 app = create_app()

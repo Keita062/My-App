@@ -2,105 +2,42 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REHATCH日報一覧</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>日報一覧</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container report-container">
-        <div class="page-header">
-            <a href="{{ url_for('index') }}" class="link">&larr; ポータルに戻る</a>
-            <h1>REHATCH日報一覧</h1>
+    <div class="container mt-5">
+        <h1>日報一覧</h1>
+        <div class="d-flex justify-content-between mb-3">
+            <a href="/" class="btn btn-secondary">ポータルへ戻る</a>
         </div>
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        
-        <div class="page-actions" style="margin-bottom: var(--spacing-8);">
-            <a href="{{ url_for('report.new_report') }}" class="btn btn-primary">新規開始報告を作成</a>
-        </div>
-        
-        <div class="report-list-container">
-            {% for report in reports %}
-            <div class="report-day-entry">
-                <div class="report-day-header">
-                    <h3>{{ report.report_date.strftime('%Y年%m月%d日') }}</h3>
-                    <div class="list-item-actions">
-                        <a href="{{ url_for('report.edit_report', id=report.id) }}" class="btn btn-secondary btn-sm">編集 / 完了報告を記入</a>
-                        <form action="{{ url_for('report.delete_report', id=report.id) }}" method="post" onsubmit="return confirm('この日の報告をすべて削除しますか？');">
-                            <button type="submit" class="btn btn-danger btn-sm">削除</button>
-                        </form>
-                    </div>
-                </div>
-                <div class="report-grid">
-                    <!-- 開始報告 -->
-                    <div class="card">
-                        <h4>【開始報告】</h4>
-                        <dl class="report-details">
-                            {% if report.start_scheduled_time and report.start_scheduled_time.strip() != '-' %}
-                            <dt>予定業務時間</dt>
-                            <dd>{{ report.start_scheduled_time }}</dd>
-                            <hr class="report-divider">
-                            {% endif %}
-                            <dt>予定業務内容</dt>
-                            <dd>
-                                {% if report.start_tasks %}
-                                <ul class="report-task-list">
-                                    {% for task in report.start_tasks %}
-                                    <li>{{ task.desc }} ({{ task.duration }}分)</li>
-                                    {% endfor %}
-                                </ul>
-                                {% else %}
-                                <p>未記入</p>
-                                {% endif %}
-                            </dd>
-                            <hr class="report-divider">
-                            <dt>業務目標</dt>
-                            <dd class="report-pre-formatted">{{ report.start_goals or '未記入' }}</dd>
-                        </dl>
-                    </div>
-                    <!-- 完了報告 -->
-                    <div class="card">
-                        <h4>【完了報告】</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>報告日</th>
+                    <th>ステータス</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>{{ report.report_date.strftime('%Y-%m-%d') }}</td>
+                    <td>
                         {% if report.end_completed_tasks %}
-                        <dl class="report-details">
-                            {% if report.end_actual_time and report.end_actual_time.strip() != '-' %}
-                            <dt>業務時間</dt>
-                            <dd>{{ report.end_actual_time }}</dd>
-                            <hr class="report-divider">
-                            {% endif %}
-                            <dt>実施業務内容</dt>
-                            <dd>
-                                <ul class="report-task-list">
-                                    {% for task in report.end_tasks %}
-                                    <li>{{ task.desc }} ({{ task.duration }}分)</li>
-                                    {% endfor %}
-                                </ul>
-                            </dd>
-                            <hr class="report-divider">
-                            <dt>反省・考察</dt>
-                            <dd class="report-pre-formatted">{{ report.end_reflection or '未記入' }}</dd>
-                        </dl>
+                            <span class="badge badge-success">完了</span>
                         {% else %}
-                        <div class="report-not-filled">
-                            <p>未記入</p>
-                            <a href="{{ url_for('report.edit_report', id=report.id) }}" class="btn btn-success btn-sm">完了報告を記入</a>
-                        </div>
+                            <span class="badge badge-warning">開始報告のみ</span>
                         {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% else %}
-            <div class="card text-center">
-                <p>登録されている日報はありません。</p>
-            </div>
-            {% endfor %}
-        </div>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('work_report.view_report', report_id=report.id) }}" class="btn btn-info btn-sm">詳細</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{{ url_for('work_report.add_report') }}" class="btn btn-primary">新規開始報告を作成</a>
     </div>
 </body>
 </html>

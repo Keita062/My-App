@@ -2,94 +2,74 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>企業研究一覧</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>企業一覧</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="page-header">
-            <h1>企業研究一覧</h1>
-            <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
-        </div>
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <div class="card mb-2">
-            <form method="get" class="filter-bar-grid">
-                <div class="form-group">
-                    <label for="search">企業名検索</label>
-                    <input type="text" id="search" name="search" value="{{ current_search or '' }}" placeholder="企業名を入力...">
-                </div>
-                <div class="form-group">
-                    <label for="industry">業界</label>
-                    <select id="industry" name="industry">
-                        <option value="">すべて</option>
-                        {% for industry in industries %}
-                        <option value="{{ industry }}" {% if industry == current_industry %}selected{% endif %}>{{ industry }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="status">選考ステータス</label>
-                    <select id="status" name="status">
-                        <option value="">すべて</option>
-                        <option value="未応募" {% if '未応募' == current_status %}selected{% endif %}>未応募</option>
-                        <option value="ES提出済" {% if 'ES提出済' == current_status %}selected{% endif %}>ES提出済</option>
-                        <option value="Webテスト" {% if 'Webテスト' == current_status %}selected{% endif %}>Webテスト</option>
-                        <option value="1次面接" {% if '1次面接' == current_status %}selected{% endif %}>1次面接</option>
-                        <option value="内定" {% if '内定' == current_status %}selected{% endif %}>内定</option>
-                        <option value="辞退" {% if '辞退' == current_status %}selected{% endif %}>辞退</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="sort">並び順</label>
-                    <select id="sort" name="sort">
-                        <option value="interest" {% if 'interest' == current_sort %}selected{% endif %}>志望度順</option>
-                        <option value="name" {% if 'name' == current_sort %}selected{% endif %}>企業名順</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">検索・絞り込み</button>
-                    <a href="{{ url_for('research.list_companies') }}" class="btn btn-secondary">リセット</a>
-                </div>
-            </form>
-        </div>
-
-        <div class="page-actions">
-            <a href="{{ url_for('research.new_company') }}" class="btn btn-primary">新規企業を登録</a>
-        </div>
-
-        <div class="research-grid">
-            {% for company in companies %}
-            <div class="card">
-                <a href="{{ url_for('research.detail_company', id=company.id) }}" class="card-link" style="text-decoration: none; color: inherit;">
-                    <div class="research-card-header">
-                        <h2 class="item-title" style="margin-bottom: 0.5rem;">{{ company.company_name }}</h2>
-                        <span class="priority-tag priority-{{ company.interest_level|lower }}">{{ company.interest_level }}</span>
-                    </div>
-                    <p class="item-details" style="margin: 0.5rem 0;">{{ company.industry or '業界未設定' }}</p>
-                    <p class="status-badge">{{ company.selection_status }}</p>
-                </a>
-                <div class="list-item-actions" style="margin-top: 1rem; border-top: 1px solid var(--color-border); padding-top: 1rem; display: flex; gap: 0.5rem;">
-                    <a href="{{ url_for('research.edit_company', id=company.id) }}" class="btn btn-secondary btn-sm">編集</a>
-                    <form action="{{ url_for('research.delete_company', id=company.id) }}" method="post" onsubmit="return confirm('「{{ company.company_name }}」を削除しますか？\n関連する選考イベントもすべて削除されます。');" style="display: inline;">
-                        <button type="submit" class="btn btn-danger btn-sm">削除</button>
-                    </form>
-                </div>
-            </div>
-            {% else %}
-            <div class="card text-center">
-                <p>登録されている企業はありません。</p>
-            </div>
-            {% endfor %}
-        </div>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>企業一覧</h1>
+        <a href="/" class="btn btn-secondary">ポータルへ戻る</a>
     </div>
+
+    <form method="get" action="{{ url_for('research.list_companies') }}" class="form-inline mb-4">
+        <input type="text" name="query" class="form-control mr-2" placeholder="企業名で検索..." value="{{ request.args.get('query', '') }}">
+        <select name="status" class="form-control mr-2">
+            <option value="">ステータスで絞り込み</option>
+            {% for s in status_options %}
+            <option value="{{ s }}" {% if s == request.args.get('status') %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">検索</button>
+    </form>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">企業一覧</a>
+        </li>
+    </ul>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>企業名</th>
+                    <th>業界</th>
+                    <th>ステータス</th>
+                    <th>最終更新日</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if companies %}
+                    {% for company in companies %}
+                    <tr>
+                        <td>{{ company.name }}</td>
+                        <td>{{ company.industry }}</td>
+                        <td><span class="badge badge-info">{{ company.status }}</span></td>
+                        <td>{{ company.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <a href="{{ url_for('research.company_detail', company_id=company.id) }}" class="btn btn-sm btn-outline-primary">詳細</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">登録されている企業はありません。</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mt-4">
+        <a href="{{ url_for('research.add_company') }}" class="btn btn-primary">新規企業を登録</a>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

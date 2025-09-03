@@ -2,72 +2,45 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>アイディア一覧</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container idea-container">
-        <div class="page-header">
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>アイディア一覧</h1>
-            <a href="{{ url_for('index') }}" class="link">ポータルに戻る &rarr;</a>
+            <a href="/" class="btn btn-secondary">ポータルへ戻る</a>
         </div>
-        <div class="card mb-2">
-            <form method="get" action="{{ url_for('idea.list_ideas') }}">
-                <div class="filter-bar">
-                    <div class="form-group">
-                        <label for="status">ステータスで絞り込み</label>
-                        <select id="status" name="status" onchange="this.form.submit()">
-                            <option value="">すべて</option>
-                            <option value="未着手" {% if current_status == '未着手' %}selected{% endif %}>未着手</option>
-                            <option value="実行中" {% if current_status == '実行中' %}selected{% endif %}>実行中</option>
-                            <option value="完了" {% if current_status == '完了' %}selected{% endif %}>完了</option>
-                            <option value="保留" {% if current_status == '保留' %}selected{% endif %}>保留</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="category">カテゴリで絞り込み</label>
-                        <select id="category" name="category" onchange="this.form.submit()">
-                            <option value="">すべて</option>
-                            {% for cat in categories %}
-                            <option value="{{ cat }}" {% if current_category == cat %}selected{% endif %}>{{ cat }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <a href="{{ url_for('idea.list_ideas') }}" class="btn btn-secondary">リセット</a>
-                </div>
-            </form>
-        </div>
-        <div class="text-center mb-2">
-            <a href="{{ url_for('idea.new_idea') }}" class="btn btn-primary">新しいアイディアを登録</a>
-        </div>
-        <div class="idea-grid">
-            {% for idea in ideas %}
-            <div class="card idea-card">
-                <div class="page-header">
-                    <h2>{{ idea.title }}</h2>
-                    {% set p_class = 'priority-low' %}
-                    {% if idea.priority == '高' %}{% set p_class = 'priority-high' %}{% endif %}
-                    {% if idea.priority == '中' %}{% set p_class = 'priority-medium' %}{% endif %}
-                    <span class="priority {{ p_class }}">{{ idea.priority }}</span>
-                </div>
-                <p class="details-meta">
-                    <strong>カテゴリ:</strong> {{ idea.category or '未分類' }}<br>
-                    <strong>ステータス:</strong> {{ idea.status }}<br>
-                    <strong>記入日:</strong> {{ idea.creation_date.strftime('%Y/%m/%d') }}<br>
-                    <strong>目標期日:</strong> {{ idea.due_date.strftime('%Y-%m-%d') if idea.due_date else '未設定' }}
-                </p>
-                <p class="details-text">{{ idea.details or '(詳細なし)' }}</p>
-                <div class="form-actions">
-                    <a href="{{ url_for('idea.edit_idea', id=idea.id) }}" class="btn btn-secondary btn-sm">編集</a>
-                    <form action="{{ url_for('idea.delete_idea', id=idea.id) }}" method="post" onsubmit="return confirm('本当にこのアイディアを削除しますか？');">
-                        <button type="submit" class="btn btn-danger btn-sm">削除</button>
-                    </form>
-                </div>
+
+        <form method="get" class="form-inline mb-4">
+            <div class="form-group mr-2">
+                <label for="category" class="mr-2">カテゴリ:</label>
+                <select name="category" id="category" class="form-control">
+                    <option value="">すべて</option>
+                    {% for category in categories %}
+                        <option value="{{ category }}" {% if category == request.args.get('category') %}selected{% endif %}>{{ category }}</option>
+                    {% endfor %}
+                </select>
             </div>
+            <button type="submit" class="btn btn-primary">絞り込み</button>
+        </form>
+
+        <div class="list-group">
+            {% for idea in ideas %}
+                <a href="{{ url_for('idea.edit_idea', idea_id=idea.id) }}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ idea.title }}</h5>
+                        <small>{{ idea.created_at.strftime('%Y-%m-%d') }}</small>
+                    </div>
+                    <p class="mb-1">カテゴリ: <span class="badge badge-info">{{ idea.category }}</span></p>
+                    <small>ステータス: {{ idea.status }}</small>
+                </a>
             {% else %}
-            <p>登録されているアイディアはありません。</p>
+                <div class="list-group-item">登録されたアイディアはありません。</div>
             {% endfor %}
+        </div>
+        <div class="mt-4">
+            <a href="{{ url_for('idea.add_idea') }}" class="btn btn-primary">新しいアイディアを登録</a>
         </div>
     </div>
 </body>
