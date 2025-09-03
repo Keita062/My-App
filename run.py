@@ -8,31 +8,22 @@ import click # Flaskのコマンド機能のためにインポート
 def create_app(config_name=None):
     """
     アプリケーションファクトリ関数。
-    この関数がFlaskアプリケーションのインスタンスを生成し、
-    各種設定や拡張機能、Blueprintを登録します。
     """
     if config_name is None:
         config_name = os.getenv('FLASK_CONFIG', 'default')
 
     app = Flask(
         __name__,
-        # 注意: ポータルページ(index.html)が flask_survey_app にあるため、
-        # そのパスを基準にしています。
         template_folder='flask_survey_app/templates',
         static_folder='flask_survey_app/static'
     )
     
-    # config.pyから設定を読み込みます
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
-    # extensions.pyからdbを初期化し、アプリケーションに紐付けます
     db.init_app(app)
 
-    # --- すべてのBlueprintをここで登録 ---
-    # 各サブアプリケーションの`routes.py`からBlueprintオブジェクトをインポートし、
-    # URLの接頭辞(prefix)と共にアプリケーションに登録します。
-    
+    # --- Blueprintの登録 ---
     from flask_survey_app.routes import survey_bp
     app.register_blueprint(survey_bp, url_prefix='/survey')
     
@@ -60,28 +51,34 @@ def create_app(config_name=None):
     from budget_app.routes import budget_bp
     app.register_blueprint(budget_bp, url_prefix='/budget')
 
-
     # --- 共通機能の登録 ---
-    # 特定のアプリケーションに属さない、全体で共通の機能を登録します。
     register_routes(app)
     register_filters(app)
     register_request_handlers(app)
     
     # --- カスタムコマンドの登録 ---
-    # データベース初期化のためのコマンドを登録します。
     @app.cli.command("init-db")
     def init_db_command():
         """データベースのテーブルをすべて作成する"""
+        # ★★★ ここにすべてのモデルをインポートする処理を追加 ★★★
+        from flask_survey_app import models
+        from work_report_app import models
+        from todo_app import models
+        from idea_app import models
+        from payroll_app import models
+        from research_app import models
+        from memo_app import models
+        from dashboard_app import models
+        from budget_app import models
+        
         with app.app_context():
-            # models.pyで定義された全てのテーブルをデータベース内に作成
             db.create_all()
         click.echo("Initialized the database.")
 
     return app
 
-# -----------------------------------------------------------------------------
-# 以下は、アプリケーションの共通機能を定義するヘルパー関数です。
-# -----------------------------------------------------------------------------
+# (以降のヘルパー関数は変更なし)
+# ...
 
 def register_routes(app):
     """ポータルページや共通APIなど、特定のアプリに属さないルートを登録"""
@@ -145,9 +142,7 @@ def register_request_handlers(app):
         return response
 
 # --- アプリケーションの実行 ---
-# create_app()を呼び出して、Flaskアプリケーションインスタンスを作成
 app = create_app()
 
 if __name__ == '__main__':
-    # `python run.py`で直接実行された場合に、開発用サーバーを起動
     app.run(debug=True, host='0.0.0.0', port=5001)

@@ -1,39 +1,46 @@
 import os
+from pathlib import Path  # pathlibをインポート
 
-# プロジェクトのルートディレクトリのパスを取得
-basedir = os.path.abspath(os.path.dirname(__file__))
+# pathlibを使用して、より確実にプロジェクトのルートディレクトリのパスを取得
+basedir = Path(__file__).resolve().parent
 
 class Config:
     """ベースとなる設定クラス"""
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'my-super-secret-key-for-development'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
-    # アップロードフォルダの保存先も、安全なinstanceフォルダ配下に設定
-    UPLOAD_FOLDER = os.path.join(basedir, 'instance', 'uploads')
+    # アップロードフォルダのパスもpathlibで設定
+    UPLOAD_FOLDER = basedir / 'instance' / 'uploads'
 
     @staticmethod
     def init_app(app):
-        # アプリケーション初期化時の共通処理（今回はなし）
-        pass
+        """アプリケーション初期化時に共通処理を実行"""
+        # instanceフォルダが存在しない場合に自動で作成する
+        instance_folder = basedir / 'instance'
+        instance_folder.mkdir(exist_ok=True)
 
 class DevelopmentConfig(Config):
     """開発環境用の設定"""
     DEBUG = True
     
-    # メインのDB（デフォルト）
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(basedir, 'instance', 'survey.db')}"
+    # instanceフォルダへのパスを定義
+    instance_path = basedir / 'instance'
+    
+    # メインのDB。str()で正しいパス文字列に変換
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + str(instance_path / 'survey.db')
     
     # 複数のデータベースの場所を 'BINDS' として一元管理
     SQLALCHEMY_BINDS = {
-        'logs':       f"sqlite:///{os.path.join(basedir, 'instance', 'log.db')}",
-        'report':     f"sqlite:///{os.path.join(basedir, 'instance', 'report.db')}",
-        'idea':       f"sqlite:///{os.path.join(basedir, 'instance', 'idea.db')}",
-        'payroll':    f"sqlite:///{os.path.join(basedir, 'instance', 'payroll.db')}",
-        'research':   f"sqlite:///{os.path.join(basedir, 'instance', 'research.db')}",
-        'memo':       f"sqlite:///{os.path.join(basedir, 'instance', 'memo.db')}",
-        'todo':       f"sqlite:///{os.path.join(basedir, 'instance', 'todo.db')}",
-        'budget':     f"sqlite:///{os.path.join(basedir, 'instance', 'budget.db')}",
-        'dashboard':  f"sqlite:///{os.path.join(basedir, 'instance', 'dashboard.db')}"
+        'survey':    'sqlite:///' + str(instance_path / 'survey.db'),
+        'logs':      'sqlite:///' + str(instance_path / 'log.db'),
+        'report':    'sqlite:///' + str(instance_path / 'report.db'),
+        'idea':      'sqlite:///' + str(instance_path / 'idea.db'),
+        'payroll':   'sqlite:///' + str(instance_path / 'payroll.db'),
+        'research':  'sqlite:///' + str(instance_path / 'research.db'),
+        'memo':      'sqlite:///' + str(instance_path / 'memo.db'),
+        'todo':      'sqlite:///' + str(instance_path / 'todo.db'),
+        'budget':    'sqlite:///' + str(instance_path / 'budget.db'),
+        'dashboard': 'sqlite:///' + str(instance_path / 'dashboard.db')
     }
 
 class ProductionConfig(Config):
