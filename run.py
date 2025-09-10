@@ -27,8 +27,8 @@ def create_app(config_name=None):
     from flask_survey_app.routes import survey_bp
     app.register_blueprint(survey_bp, url_prefix='/survey')
 
-    from work_report_app.routes import report_bp
-    app.register_blueprint(report_bp, url_prefix='/report')
+    # from work_report_app.routes import report_bp
+    # app.register_blueprint(report_bp, url_prefix='/report')
 
     from todo_app.routes import todo_bp
     app.register_blueprint(todo_bp, url_prefix='/todo')
@@ -48,8 +48,8 @@ def create_app(config_name=None):
     from dashboard_app.routes import dashboard_bp
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
 
-    from budget_app.routes import budget_bp
-    app.register_blueprint(budget_bp, url_prefix='/budget')
+    # from budget_app.routes import budget_bp
+    # app.register_blueprint(budget_bp, url_prefix='/budget')
 
 
     # --- 共通機能の登録 ---
@@ -62,14 +62,14 @@ def create_app(config_name=None):
     def init_db_command():
         """データベースのテーブルをすべて作成する"""
         from flask_survey_app import models
-        from work_report_app import models
+        # from work_report_app import models
         from todo_app import models
         from idea_app import models
         from payroll_app import models
         from research_app import models
         from memo_app import models
         from dashboard_app import models
-        from budget_app import models
+        # from budget_app import models
 
         with app.app_context():
             # --- ★★★デバッグコード：データベースのパスをターミナルに表示★★★ ---
@@ -87,7 +87,6 @@ def create_app(config_name=None):
 
     return app
 
-# (以降のヘルパー関数は変更なし)
 def register_routes(app):
     @app.route('/')
     def index():
@@ -96,18 +95,18 @@ def register_routes(app):
     def get_events():
         from idea_app.models import Idea
         from flask_survey_app.models import Survey
-        from work_report_app.models import Report
+        # from work_report_app.models import Report
         from research_app.models import Company, SelectionEvent
         from todo_app.models import Todo
         events = []
-        reports = Report.query.all()
-        for report in reports:
-            events.append({
-                'title': "【日報】提出済", 
-                'start': report.report_date.isoformat(), 
-                'url': url_for('work_report.list_reports'), 
-                'className': 'event-report'
-            })
+        # reports = Report.query.all()
+        # for report in reports:
+        #     events.append({
+        #         'title': "【日報】提出済", 
+        #         'start': report.report_date.isoformat(), 
+        #         'url': url_for('work_report.list_reports'), 
+        #         'className': 'event-report'
+        #     })
         return jsonify(events)
 
 def register_filters(app):
